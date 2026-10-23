@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||my.ruc.edu.cn/*/ruc/banner/banner_ruc.gif",
+      "resourceTypes": ["image"]
+    }
+  },
+  {
+    "id": 2,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||my.ruc.edu.cn/*/ruc/banner/banner_ruc_stop.png",
+      "resourceTypes": ["image"]
+    }
+  }
+]
