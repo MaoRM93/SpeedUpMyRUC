@@ -197,7 +197,71 @@
   opacity: 1;
 }
 
-/* ---------- 7. 动效 ---------- */
+/* ---------- 7. 功能页签：Chrome 选项卡 ---------- */
+/* 「我的收藏 / 为您推荐」与「AI 智能服务」两处大页签原来用梯形背景图
+   （47px 高、8px 35px 内边距），选中态凸起，和下方内容卡片断成两块。
+   这里改成浏览器选项卡：34px 高、8px 顶部圆角、选中项白底与卡片连成一体。
+   【脆弱锚点：页签类名 css-1sun605】 */
+#sui-app-page:has(.mainPage) .MuiTabs-root:has(.css-1sun605) {
+  min-height: 0 !important;
+  height: 34px;
+  overflow: visible;
+}
+
+#sui-app-page:has(.mainPage) .MuiTabs-root:has(.css-1sun605) .MuiTabs-scroller,
+#sui-app-page:has(.mainPage) .MuiTabs-root:has(.css-1sun605) .MuiTabs-flexContainer {
+  height: 34px !important;
+  overflow: visible !important;
+}
+
+/* 首个页签内缩 8px，避开内容卡片左上角的圆角 */
+#sui-app-page:has(.mainPage) .MuiTabs-root:has(.css-1sun605) .MuiTabs-flexContainer {
+  padding-left: var(--ruc-space-2);
+}
+
+#sui-app-page:has(.mainPage) .MuiTabs-root:has(.css-1sun605) .MuiTabs-indicator {
+  display: none !important;
+}
+
+#sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605 {
+  min-height: 0 !important;
+  height: 34px;
+  min-width: 0;
+  padding: 0 14px !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: var(--ruc-radius-md) var(--ruc-radius-md) 0 0;
+  color: var(--ruc-text-2) !important;
+  letter-spacing: 0 !important;
+  transition: background-color var(--ruc-motion-fast), color var(--ruc-motion-fast);
+}
+
+#sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605,
+#sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605 * {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  color: inherit !important;
+}
+
+#sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605:hover {
+  background-color: var(--ruc-hairline) !important;
+}
+
+#sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605.Mui-selected {
+  background-color: var(--ruc-surface) !important;
+  border-color: #dcdfe4;
+  color: var(--ruc-text) !important;
+}
+
+#sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605.Mui-selected:hover {
+  background-color: var(--ruc-surface) !important;
+}
+
+/* ---------- 8. 动效 ---------- */
 @media (prefers-reduced-motion: reduce) {
   #sui-app-page:has(.mainPage) .searchBox,
   #sui-app-page:has(.mainPage) .main-content .MuiTab-root,

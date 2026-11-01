@@ -93,6 +93,7 @@
     "c1da7f3a-e7ad-4347-b33e-f6a1c4cf158f": ["acad", "calgrid"],
     "e91e8d5e-2f03-40a4-9a18-18451e0993e3": ["acad", "calperson"],
     "c5e8896d-87aa-4299-a05e-6cfbc5aff591": ["acad", "callist"],
+    "a7c105ea-cc68-4d5b-af61-f75944810017": ["acad", "callist"],
     "f49da172-26b9-4ce9-bca8-2dee73bb83dd": ["acad", "cap"],
     "b05ef534-768f-467d-8cfc-206f17d089d8": ["acad", "server"],
     "23e86d90-104a-43de-88ad-ae4fcc7d6b52": ["acad", "search"],
