@@ -107,3 +107,26 @@ Promise.all([
   }
   render();
 });
+
+// 主题：跟随系统 / 浅色 / 深色，写入 storage.local.theme（默认 auto）
+const themeSeg = document.getElementById("themeSeg");
+let theme = "auto";
+
+function paintTheme() {
+  for (const btn of themeSeg.querySelectorAll("button")) {
+    btn.classList.toggle("on", btn.dataset.theme === theme);
+  }
+}
+
+themeSeg.addEventListener("click", (event) => {
+  const btn = event.target.closest("button[data-theme]");
+  if (!btn) return;
+  theme = btn.dataset.theme;
+  paintTheme();
+  chrome.storage.local.set({ theme });
+});
+
+chrome.storage.local.get({ theme: "auto" }).then(({ theme: stored }) => {
+  theme = stored === "light" || stored === "dark" ? stored : "auto";
+  paintTheme();
+});

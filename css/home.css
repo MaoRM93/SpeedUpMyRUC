@@ -282,3 +282,197 @@
     transition: none !important;
   }
 }
+
+/* ---------- 9. 深色模式（仅首页） ---------- */
+/* 令牌切换见 css/tokens.css；本文件只做站点硬编码色值的逐项映射。
+   theme.js 在 document_start 同步写入 html[data-ruc-theme]，系统深色时无白闪。
+   以下类名均为实测【脆弱锚点】 */
+:root[data-ruc-theme="dark"]:has(#sui-app-page .mainPage) {
+  color-scheme: dark;
+}
+
+/* 9.1 页面底色：站点 body 为 rgb(252,247,240)，外层壳 .css-10y7bwx 为 #f5f5f5 */
+:root[data-ruc-theme="dark"]:has(#sui-app-page .mainPage) body,
+:root[data-ruc-theme="dark"]:has(#sui-app-page .mainPage) .css-10y7bwx {
+  background-color: var(--ruc-bg);
+}
+
+/* 9.1b 浮动的「问AI」容器 .css-9bac1i：内部已被 robot 开关隐藏，只剩一块白底，
+   暗色下会变成横在视口上方的一条白带，直接透明 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .css-9bac1i {
+  background-color: transparent;
+}
+
+/* 9.2 卡片与内层面板：原来都是纯白，深色下统一为卡片表面 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .mbox,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1g0lrd3,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1lbuwlc,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-f3m020,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .noPic.css-ch4h8o {
+  background-color: var(--ruc-surface);
+}
+
+/* 9.2b 带页签的卡片（收藏 / AI 服务）顶部有一层 white→#fcf7f0 的渐变遮罩
+   （.mbox::after），暗底上会变成一条灰带，需整层移除 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .mbox.css-6rc3s3::after,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .mbox.css-1j21nac::after {
+  background-image: none !important;
+}
+
+/* 9.3 浅色小面板：应用磁贴 #fdfcfc、图标底 #f5f8fc、日历事件行 #fffcf7、
+   简报内块 #fffaf7、日历空态 rgba(255,255,255,.8) → 次级表面；订阅斑马纹沿用页面底色 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-19q61fs,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1enuvvu,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1zq612,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-9lnpfq,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-s684d9,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-189ts2f {
+  background-color: var(--ruc-surface-muted);
+}
+
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1a9rooy {
+  background-color: var(--ruc-surface);
+}
+
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .item.css-dwibz9 {
+  background-color: var(--ruc-bg);
+}
+
+/* 日程列表里的单条课程 rgb(252,248,244) → 次级表面 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-189p56r {
+  background-color: var(--ruc-surface-muted);
+}
+
+/* 9.4 文字：站点在叶节点上硬编码 rgba(0,0,0,.88) / rgb(36,36,36) */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-gzoi1t,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1uc7y1h,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1yztyfh,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-a3hpos,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1is3hip {
+  color: var(--ruc-text);
+}
+
+/* 品牌红文字（日期、区块大标题、查看入口）：原 #861a12 在暗底不可读 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-14ekxs8,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1d20nk4,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-tas7ym,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .css-i5q9k4 {
+  color: var(--ruc-brand);
+}
+
+/* 「全部」等纯文字按钮：站点用主题色 #861a12，跟随品牌令牌提亮 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .MuiButton-root {
+  color: var(--ruc-brand);
+}
+
+/* 页签内按钮自带 rgb(62,61,60)，未选中统一回次级文字色 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .MuiTab-root:not(.Mui-selected) button,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .MuiTab-root:not(.Mui-selected) button * {
+  color: var(--ruc-text-2) !important;
+}
+
+/* 金色「添加日程」保留原强调色，仅提亮 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-xgstw9,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-xgstw9 * {
+  color: #cda574;
+}
+
+/* 正文资讯链接原 rgb(50,71,160)，暗底上提亮 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content a {
+  color: #8fa9e8;
+}
+
+/* 9.5 日历：普通日期、上月末置灰、今天白字（红底） */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .dayName {
+  color: var(--ruc-text) !important;
+}
+
+/* 小页签（我的日历 / 课表 / 校历）选中态自带白色渐变底 rgba(255,255,255,.9) */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1vswfjl .MuiTab-root {
+  background-image: none !important;
+}
+
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .beforeDay .dayName {
+  color: var(--ruc-text-3) !important;
+}
+
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .todayDay .dayName {
+  color: #ffffff !important;
+}
+
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .days {
+  color: var(--ruc-text-2) !important;
+}
+
+/* 日期方块：站点用无类名的 <i> 当底色（浅灰 #e5e6e7 / 白 / 今天品牌红），暗底上需重映射。
+   只取 .MuiTypography-caption 的直接子 <i>（事件圆点嵌在 .event-mark 内，不受影响） */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .calendar_element .MuiTypography-caption > i {
+  background-color: var(--ruc-surface-muted) !important;
+}
+
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .calendar_element .todayDay > i {
+  background-color: var(--ruc-brand) !important;
+}
+
+/* 9.6 搜索胶囊：白底与 #dfe1e5 描边改为深色表面 / 分割线 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .css-1fi09qg {
+  background-color: var(--ruc-surface);
+  box-shadow: inset 0 0 0 1px var(--ruc-divider);
+}
+
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .css-1fi09qg:hover {
+  box-shadow: inset 0 0 0 1px var(--ruc-divider), 0 1px 6px rgba(0, 0, 0, 0.4);
+}
+
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .css-1fi09qg:focus-within {
+  box-shadow: inset 0 0 0 1px var(--ruc-divider), 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .css-td0tw1:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* AI 图标原本靠 brightness(0) 转黑，深色下反相为白 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .css-td0tw1 img {
+  filter: brightness(0) invert(1) opacity(0.6);
+}
+
+/* 9.7 Chrome 页签：选中白底与 #dcdfe4 描边 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605.Mui-selected {
+  background-color: var(--ruc-surface) !important;
+  border-color: var(--ruc-divider);
+}
+
+/* 9.8 左侧导航：hover 的黑色 4% 改白色 6%；底部白图标反相；分隔线跟随令牌 */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2:hover {
+  background-color: var(--ruc-hairline);
+}
+
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .left.css-vc7il7 .css-1ra27ml img {
+  filter: brightness(0) invert(1);
+  opacity: 0.42;
+}
+
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .left.css-vc7il7 .css-adllax,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .left.css-vc7il7 .css-xz1zqc {
+  background-color: var(--ruc-divider);
+}
+
+/* 9.9 顶栏右侧 4 个入口：图标为品牌红 SVG，压黑反相成白色；
+   进入区外圈的白色径向光晕（::before 白色 radial-gradient）在暗底会变成亮块，需移除；
+   下方入口文字为硬编码 rgba(0,0,0,.88) */
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .ant-col:has(.css-yw8xxi) svg {
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+}
+
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .ant-col:has(.css-yw8xxi) .css-1px51jt::before,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .ant-col:has(.css-yw8xxi) .css-1xzcrao::before,
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .ant-col:has(.css-yw8xxi) .css-1auas76::before {
+  background-image: none !important;
+}
+
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .ant-col:has(.css-yw8xxi) .css-1vn5xi9 {
+  color: var(--ruc-text);
+}
+

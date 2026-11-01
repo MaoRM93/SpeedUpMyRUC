@@ -1,5 +1,6 @@
 /* 数智人大 · 设计令牌（Fluent 2 基础层）
-   仅定义变量，不产生任何视觉输出。深色模式令牌在阶段 6 追加。 */
+   仅定义变量，不产生任何视觉输出。深色令牌由 theme.js 写入的
+   html[data-ruc-theme="dark"] 触发。 */
 :root {
   /* 品牌 */
   --ruc-brand: #861a12;
@@ -40,4 +41,23 @@
   --ruc-space-4: 16px;
   --ruc-space-5: 24px;
   --ruc-space-6: 32px;
+}
+
+/* 深色令牌：保留站点暖色调，仅整体压暗；品牌红提亮以保证对比度 */
+:root[data-ruc-theme="dark"] {
+  --ruc-brand: #e07264;
+  --ruc-brand-strong: #ef8a7c;
+  --ruc-brand-weak: rgba(224, 114, 100, 0.16);
+
+  --ruc-bg: #171614;
+  --ruc-surface: #201f1d;
+  --ruc-surface-muted: #292725;
+  --ruc-surface-hover: #2c2a27;
+
+  --ruc-text: #eae6df;
+  --ruc-text-2: #aba59c;
+  --ruc-text-3: #7e7970;
+
+  --ruc-divider: #37342f;
+  --ruc-hairline: rgba(255, 255, 255, 0.06);
 }

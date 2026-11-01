@@ -31,7 +31,7 @@
     },
     {
       "matches": ["*://my.ruc.edu.cn/*"],
-      "js": ["items.js", "ui-cleanup.js", "icons.js"],
+      "js": ["theme.js", "items.js", "ui-cleanup.js", "icons.js"],
       "css": ["css/tokens.css", "css/home.css"],
       "run_at": "document_start",
       "all_frames": false

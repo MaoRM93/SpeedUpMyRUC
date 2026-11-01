@@ -21,6 +21,37 @@
   header .v { font-size: 11px; color: #86868b; font-variant-numeric: tabular-nums; }
   main { max-height: 510px; overflow-y: auto; }
   section { border-top: 1px solid #e5e5ea; padding: 5px 0 6px; }
+  .theme {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px 10px;
+  }
+  .theme .tl { font-size: 11px; color: #86868b; }
+  .seg {
+    display: flex;
+    flex: 1;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 8px;
+    background: #f2f2f4;
+  }
+  .seg button {
+    flex: 1;
+    padding: 3px 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    font: inherit;
+    font-size: 11px;
+    color: #616166;
+    cursor: pointer;
+  }
+  .seg button.on {
+    background: #fff;
+    color: #1d1d1f;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  }
   .g, .i {
     display: flex;
     align-items: center;
@@ -50,7 +81,10 @@
     body { color: #f5f5f7; background: #1e1e1e; }
     section, footer { border-color: #3a3a3c; }
     .i:hover { background: #2c2c2e; }
-    header .v, .g, .n, footer { color: #98989d; }
+    header .v, .g, .n, footer, .theme .tl { color: #98989d; }
+    .seg { background: #2c2c2e; }
+    .seg button { color: #a1a1a6; }
+    .seg button.on { background: #48484a; color: #f5f5f7; }
   }
 </style>
 </head>
@@ -59,6 +93,14 @@
     <span class="t">SpeedUpMyRUC</span>
     <span class="v">101.0.0.100</span>
   </header>
+  <div class="theme">
+    <span class="tl">主题</span>
+    <div class="seg" id="themeSeg" role="radiogroup" aria-label="主题">
+      <button type="button" data-theme="auto">跟随系统</button>
+      <button type="button" data-theme="light">浅色</button>
+      <button type="button" data-theme="dark">深色</button>
+    </div>
+  </div>
   <main id="list"></main>
   <footer>勾选即时生效，无需刷新</footer>
   <script src="items.js"></script>
