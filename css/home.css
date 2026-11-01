@@ -31,28 +31,41 @@
   border-radius: var(--ruc-radius-md);
 }
 
-/* ---------- 4. 搜索栏（Google 风格单行胶囊） ---------- */
-/* 4.1 去掉搜索组外层的白色底板与红色渐变描边框 */
-#sui-app-page:has(.mainPage) div:has(> div:has(> .searchBox)) {
+/* ---------- 4. 搜索栏（Google 单行胶囊） ---------- */
+/* 4.1 外层白色底板透明【脆弱锚点：.css-pbq6m1，433×56 占位不变】 */
+#sui-app-page:has(.mainPage) .css-pbq6m1 {
   background-color: transparent;
-  border-radius: 0;
 }
 
-#sui-app-page:has(.mainPage) div:has(> .searchBox) {
+/* 4.2 原红色渐变框改为胶囊本体（保留 4px 内缩，425×48）【脆弱锚点：.css-1fi09qg】
+   1px 描边用 inset box-shadow 实现，不改变任何尺寸 */
+#sui-app-page:has(.mainPage) .css-1fi09qg {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  box-sizing: border-box;
   background-image: none;
   background-color: var(--ruc-surface);
   border-radius: 999px;
   box-shadow: inset 0 0 0 1px #dfe1e5;
-  display: flex;
-  align-items: center;
+  transition: box-shadow var(--ruc-motion-fast);
 }
 
-/* 4.2 输入区透明化，由外层胶囊承担底与描边 */
+#sui-app-page:has(.mainPage) .css-1fi09qg:hover {
+  box-shadow: inset 0 0 0 1px #dfe1e5, 0 1px 6px rgba(32, 33, 36, 0.18);
+}
+
+#sui-app-page:has(.mainPage) .css-1fi09qg:focus-within {
+  box-shadow: inset 0 0 0 1px #dfe1e5, 0 1px 6px rgba(32, 33, 36, 0.24);
+}
+
+/* 4.3 输入区透明，由胶囊承担底色与描边 */
 #sui-app-page:has(.mainPage) .searchBox {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   background-color: transparent;
   border-radius: 999px;
-  padding-left: 12px;
+  padding: 4px 4px 4px 18px;
 }
 
 #sui-app-page:has(.mainPage) .searchBox:focus-within {
@@ -60,25 +73,53 @@
   box-shadow: none;
 }
 
-/* 4.3 聚焦时整个人大红线细边（inset 描边不改变布局尺寸） */
-#sui-app-page:has(.mainPage) div:has(> .searchBox):focus-within {
-  box-shadow: inset 0 0 0 1px var(--ruc-brand);
+/* 输入组右侧留出 38px，避免文字钻到 AI 图标下面 */
+#sui-app-page:has(.mainPage) .searchBox > div:first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-right: 38px;
 }
 
-/* 4.4 AI 入口：红色实心块降级为右端浅灰胶囊（参考 Google「AI 模式」） */
-#sui-app-page:has(.mainPage) div:has(> .searchBox) .space-x-1:has(img) {
-  background-color: #f1f3f4;
-  color: #202124;
+/* 4.4 AI 入口：从「问AI」胶囊降级为放大镜左侧 28px 圆形图标
+   right:80px = 胶囊内边距 4 + 图标组 66 + 间距 10，定位后不占布局流 */
+#sui-app-page:has(.mainPage) .css-1fi09qg > .css-td0tw1 {
+  position: absolute;
+  right: 80px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  min-width: 0;
+  height: 28px;
+  padding: 0;
+  margin: 0;
+  border-width: 0;
+  flex: 0 0 auto;
+  background-color: transparent;
   border-radius: 999px;
-  box-shadow: inset 0 0 0 1px #dadce0;
-  height: 34px;
-  padding: 0 12px;
-  margin-right: 6px;
-  font-size: 13px;
+  transition: background-color var(--ruc-motion-fast);
 }
 
-#sui-app-page:has(.mainPage) div:has(> .searchBox) .space-x-1:has(img) img {
-  filter: grayscale(1) brightness(0.35);
+#sui-app-page:has(.mainPage) .css-1fi09qg > .css-td0tw1:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+/* 隐藏「问AI」文字，仅留图标 */
+#sui-app-page:has(.mainPage) .css-td0tw1 > span {
+  display: none;
+}
+
+#sui-app-page:has(.mainPage) .css-td0tw1 img {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) saturate(0) opacity(0.55);
+  transition: filter var(--ruc-motion-fast);
+}
+
+#sui-app-page:has(.mainPage) .css-td0tw1:hover img {
+  filter: brightness(0) saturate(0) opacity(0.8);
 }
 
 #sui-app-page:has(.mainPage) .searchBox input {
@@ -99,10 +140,71 @@
   transition: color var(--ruc-motion-fast);
 }
 
-/* ---------- 6. 动效 ---------- */
+/* ---------- 6. 左侧导航 ---------- */
+/* 6.1 容器：白底 + 右侧 1px 分割线；品牌竖条 .page_data（含校徽）保持原样
+   【脆弱锚点：.left.css-vc7il7，宽度 260 不变，仅换底色】 */
+#sui-app-page:has(.mainPage) .left.css-vc7il7 {
+  background-color: var(--ruc-surface);
+  box-shadow: inset -1px 0 0 var(--ruc-divider);
+}
+
+/* 6.2 菜单项：深色文字，hover / 选中用圆角浅底替代原金色下划线
+   【脆弱锚点：.css-o7dev2，实测 75×40 @x=115，纵向间距 17px 不变】 */
+#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2 {
+  width: 180px;
+  border-radius: var(--ruc-radius-sm);
+  color: var(--ruc-text);
+  transition: background-color var(--ruc-motion-fast), color var(--ruc-motion-fast);
+}
+
+#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2 button,
+#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2 .name {
+  color: inherit;
+}
+
+#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2.selected {
+  background-color: var(--ruc-brand-weak);
+  color: var(--ruc-brand);
+}
+
+#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2.selected button {
+  font-weight: 600;
+}
+
+/* 去掉原选中项的金色 37×1 下划线 */
+#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2.selected::after {
+  display: none;
+}
+
+/* 6.3 底部链接行：白字改次级文字色，白色图标转深灰，白色分隔线改中性灰
+   【脆弱锚点：.css-1ra27ml 链接行 / .css-adllax、.css-xz1zqc 1×16 分隔线】 */
+#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-1ra27ml span {
+  color: var(--ruc-text-2);
+}
+
+#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-1ra27ml img {
+  filter: brightness(0) saturate(0);
+  opacity: 0.45;
+}
+
+#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-adllax,
+#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-xz1zqc {
+  background-color: #d5d5d5;
+  opacity: 1;
+}
+
+/* ---------- 7. 动效 ---------- */
 @media (prefers-reduced-motion: reduce) {
   #sui-app-page:has(.mainPage) .searchBox,
-  #sui-app-page:has(.mainPage) .main-content .MuiTab-root {
+  #sui-app-page:has(.mainPage) .main-content .MuiTab-root,
+  #sui-app-page:has(.mainPage) .css-1fi09qg,
+  #sui-app-page:has(.mainPage) .css-td0tw1,
+  #sui-app-page:has(.mainPage) .css-td0tw1 img,
+  #sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2 {
     transition: none !important;
   }
 }
