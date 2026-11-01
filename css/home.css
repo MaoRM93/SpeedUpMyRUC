@@ -31,6 +31,16 @@
   border-radius: var(--ruc-radius-md);
 }
 
+/* 3.1 顶部留白收敛：标题下 140px 原为装饰插画预留，插画已隐藏则收至 40px
+   头部高度改 auto 自适应，搜索栏与右侧入口整体上移 100px【脆弱锚点：.mtitle】 */
+#sui-app-page:has(.mainPage) .NoHeaderBg2.header {
+  height: auto;
+}
+
+#sui-app-page:has(.mainPage) .NoHeaderBg2.header .mtitle {
+  margin-bottom: 40px;
+}
+
 /* ---------- 4. 搜索栏（Google 单行胶囊） ---------- */
 /* 4.1 外层白色底板透明【脆弱锚点：.css-pbq6m1，433×56 占位不变】 */
 #sui-app-page:has(.mainPage) .css-pbq6m1 {
