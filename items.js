@@ -70,6 +70,36 @@ globalThis.RUC_FAST_ITEMS = [
     ],
   },
   {
+    group: "首页板块（勾选显示）",
+    items: [
+      {
+        key: "blockNotice",
+        label: "通知公告 + 日程中心",
+        block: "通知公告",
+      },
+      {
+        key: "blockFav",
+        label: "我的收藏 / 为您推荐",
+        block: "我的收藏",
+      },
+      {
+        key: "blockAiServ",
+        label: "AI 智能服务",
+        block: "AI智能服务",
+      },
+      {
+        key: "blockQuickNav",
+        label: "快捷导航",
+        block: "快捷导航",
+      },
+      {
+        key: "blockSub",
+        label: "AI 简报 / 我的订阅",
+        block: "AI简报",
+      },
+    ],
+  },
+  {
     group: "文案精简",
     items: [
       {

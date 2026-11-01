@@ -17,6 +17,8 @@
   // 默认全开，storage 里显式为 false 才关闭
   const flags = Object.fromEntries(KEYS.map((k) => [k, true]));
   const on = (key) => flags[key] !== false;
+  // 首页板块条目语义相反：勾选=保留显示，取消勾选才隐藏
+  const applied = (it) => (it.block ? flags[it.key] === false : on(it.key));
 
   let scans = 0;
   let timer = 0;
@@ -48,12 +50,12 @@
 
   const hidden = (el) => el && el.dataset[HIDDEN] === "1";
 
-  function hide(el, key) {
+  function hide(el, key, skipCollapse) {
     if (!el || hidden(el) || el === document.body || el === document.documentElement) return;
     el.dataset[HIDDEN] = "1";
     el.dataset[ITEM] = key;
     el.style.setProperty("display", "none", "important");
-    collapse(el, key);
+    if (!skipCollapse) collapse(el, key);
   }
 
   // 回收因隐藏而空掉的包裹层，避免留下大块留白
@@ -142,6 +144,29 @@
     return null;
   }
 
+  // 以模块标题为锚点隐藏首页整块，避免直接依赖哈希类名
+  // 只在 main 范围内做整段文字精确匹配，防止正文里的长标题被误命中
+  function hideBlock(text, key) {
+    if (document.querySelector(`[data-ruc-fast-item="${key}"]`)) return;
+    const main =
+      document.querySelector("#sui-app-page .mainPage .main-content") ||
+      document.querySelector(".mainPage .main-content");
+    if (!main) return;
+    let leaf = null;
+    for (const el of main.querySelectorAll("*")) {
+      if (el.children.length) continue;
+      if ((el.textContent || "").trim() !== text) continue;
+      if (el.getBoundingClientRect().height < 1) continue;
+      leaf = el;
+      break;
+    }
+    if (!leaf) return;
+    let el = leaf;
+    while (el.parentElement && el.parentElement !== main) el = el.parentElement;
+    if (!el || el === main) return;
+    hide(el, key, true);
+  }
+
   function lowestCommonAncestor(a, b) {
     const seen = new Set();
     for (let node = a; node; node = node.parentElement) seen.add(node);
@@ -210,7 +235,12 @@
   function scan() {
     if (++scans > MAX_SCANS) return;
     for (const it of ALL) {
-      if (!on(it.key) || !hostOk(it.key) || !it.texts) continue;
+      if (!hostOk(it.key)) continue;
+      if (it.block) {
+        if (applied(it)) hideBlock(it.block, it.key);
+        continue;
+      }
+      if (!on(it.key) || !it.texts) continue;
       for (const text of it.texts) {
         const el = leafByText(text);
         if (!el) continue;
@@ -255,18 +285,20 @@
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== "local" || !changes.items) return;
     const next = changes.items.newValue || {};
-    let reenabled = false;
-    for (const k of KEYS) {
-      const was = flags[k];
+    let reapply = false;
+    for (const it of ALL) {
+      const k = it.key;
+      const was = applied(it);
       flags[k] = next[k] !== false;
-      if (was && !flags[k]) {
+      const now = applied(it);
+      if (was && !now) {
         restore(k);
         if (k === "reorder") restoreFavorites();
       }
-      if (!was && flags[k]) reenabled = true;
+      if (!was && now) reapply = true;
     }
     applyCSS();
-    if (reenabled && document.body) {
+    if (reapply && document.body) {
       scans = 0;
       scan();
     }
