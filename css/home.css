@@ -1,4 +1,4 @@
-/* 数智人大 · 阶段 1 基础视觉体系
+/* 数智人大 · 阶段 1 基础视觉体系 + 阶段 2 搜索栏
    作用域：仅首页（#sui-app-page 内存在 .mainPage 时生效）
    说明：带 .css-xxxx 哈希类的规则均经真实页面测量验证，标记为【脆弱锚点】。 */
 
@@ -31,31 +31,54 @@
   border-radius: var(--ruc-radius-md);
 }
 
-/* ---------- 4. 搜索栏 ---------- */
-/* 现状：白底、无边框、2px 32px 32px 2px（右侧胶囊）。改为浅灰底 + 统一 8px 圆角 */
-#sui-app-page:has(.mainPage) .searchBox {
-  background-color: var(--ruc-surface-muted);
-  border-radius: var(--ruc-radius-md);
-  transition: background-color var(--ruc-motion-fast),
-    box-shadow var(--ruc-motion-fast);
+/* ---------- 4. 搜索栏（Google 风格单行胶囊） ---------- */
+/* 4.1 去掉搜索组外层的白色底板与红色渐变描边框 */
+#sui-app-page:has(.mainPage) div:has(> div:has(> .searchBox)) {
+  background-color: transparent;
+  border-radius: 0;
 }
 
-/* 聚焦：底色转白 + 1px 人大红细边（用 inset 描边，不改变布局尺寸） */
-#sui-app-page:has(.mainPage) .searchBox:focus-within {
+#sui-app-page:has(.mainPage) div:has(> .searchBox) {
+  background-image: none;
   background-color: var(--ruc-surface);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px #dfe1e5;
+  display: flex;
+  align-items: center;
+}
+
+/* 4.2 输入区透明化，由外层胶囊承担底与描边 */
+#sui-app-page:has(.mainPage) .searchBox {
+  flex: 1;
+  background-color: transparent;
+  border-radius: 999px;
+  padding-left: 12px;
+}
+
+#sui-app-page:has(.mainPage) .searchBox:focus-within {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* 4.3 聚焦时整个人大红线细边（inset 描边不改变布局尺寸） */
+#sui-app-page:has(.mainPage) div:has(> .searchBox):focus-within {
   box-shadow: inset 0 0 0 1px var(--ruc-brand);
 }
 
-/* 取消外层红色渐变描边框：实测为 searchBox 直接父级的 radial-gradient 背景，
-   改用语义选择器定位，不依赖哈希类 */
-#sui-app-page:has(.mainPage) div:has(> .searchBox) {
-  background-image: none;
+/* 4.4 AI 入口：红色实心块降级为右端浅灰胶囊（参考 Google「AI 模式」） */
+#sui-app-page:has(.mainPage) div:has(> .searchBox) .space-x-1:has(img) {
+  background-color: #f1f3f4;
+  color: #202124;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px #dadce0;
+  height: 34px;
+  padding: 0 12px;
+  margin-right: 6px;
+  font-size: 13px;
 }
 
-/* 外层描边框取消后，为搜索组内的 AI 入口补独立品牌色底（原白字依赖该渐变） */
-#sui-app-page:has(.mainPage) div:has(> .searchBox) .space-x-1:has(img) {
-  background-color: var(--ruc-brand);
-  border-radius: var(--ruc-radius-sm);
+#sui-app-page:has(.mainPage) div:has(> .searchBox) .space-x-1:has(img) img {
+  filter: grayscale(1) brightness(0.35);
 }
 
 #sui-app-page:has(.mainPage) .searchBox input {
