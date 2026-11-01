@@ -267,6 +267,22 @@
     img.style.setProperty("object-fit", "cover", "important");
   }
 
+  // 浅色模式校徽换成红色矢量版；深色保留站点原金色版。
+  // 扩展注入的 CSS 里 url() 会按页面域名解析（../assets 会 404），
+  // 因此这里用 chrome.runtime.getURL 给出扩展绝对地址。
+  const LOGO_FILE = "assets/logo-ruc-red.png";
+  function swapLogo() {
+    if (typeof chrome === "undefined" || !chrome.runtime || !chrome.runtime.getURL) return;
+    const url = chrome.runtime.getURL(LOGO_FILE);
+    const light = document.documentElement.dataset.rucTheme === "light";
+    document.querySelectorAll('.left.css-vc7il7 img[src*="logo-ruc.png"], .left.css-vc7il7 img[data-ruc-logo]').forEach((img) => {
+      if (!img.dataset.rucLogoSrc) img.dataset.rucLogoSrc = img.getAttribute("src");
+      const want = light ? url : img.dataset.rucLogoSrc;
+      if (img.getAttribute("src") !== want) img.src = want;
+      img.dataset.rucLogo = "1";
+    });
+  }
+
   function scan(root) {
     const scope = root && root.querySelectorAll ? root : document;
     scope.querySelectorAll('img[src*="appstore"], img[src*="icon_t"]').forEach((img) => {
@@ -277,6 +293,7 @@
       swap(scope);
       swapModule(scope);
     }
+    swapLogo();
   }
 
   scan();
@@ -285,8 +302,11 @@
     new MutationObserver((records) => {
       for (const r of records) {
         if (r.type === "attributes") {
-          swap(r.target);
-          swapModule(r.target);
+          if (r.attributeName === "data-ruc-theme") swapLogo();
+          else {
+            swap(r.target);
+            swapModule(r.target);
+          }
         } else {
           for (const n of r.addedNodes) {
             if (n.nodeType !== 1) continue;
@@ -301,7 +321,7 @@
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ["src"]
+      attributeFilter: ["src", "data-ruc-theme"]
     });
   };
   if (document.body) start();

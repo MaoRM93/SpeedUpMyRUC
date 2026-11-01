@@ -32,13 +32,23 @@
 }
 
 /* 3.1 顶部留白收敛：标题下 140px 原为装饰插画预留，插画已隐藏则收至 40px
-   头部高度改 auto 自适应，搜索栏与右侧入口整体上移 100px【脆弱锚点：.mtitle】 */
+   头部高度改 auto 自适应，搜索栏与右侧入口整体上移 100px【脆弱锚点：.mtitle】
+   注意：菜单项「标题下留白压缩」的内联样式带 !important（24px，原为压 140px），
+   会覆盖本规则，故这里同样用 !important 固定为 40px */
 #sui-app-page:has(.mainPage) .NoHeaderBg2.header {
   height: auto;
 }
 
 #sui-app-page:has(.mainPage) .NoHeaderBg2.header .mtitle {
-  margin-bottom: 40px;
+  margin-bottom: 40px !important;
+}
+
+/* 3.2 顶栏右侧 4 个入口（待办/消息/邮箱/云盘）：站点把 .dataNum 定位在列容器上方
+   5px（高度 57 > 容器 56，向上溢出），与搜索胶囊中线相差 5px。用相对位移拉回，
+   不改布局占位也不影响点击热区 */
+#sui-app-page:has(.mainPage) .header .ant-col:has(.dataNum) .css-v2kfba {
+  position: relative;
+  top: 5px;
 }
 
 /* ---------- 4. 搜索栏（Google 单行胶囊） ---------- */
@@ -232,10 +242,10 @@
   height: 30px !important;
 }
 
-/* 6.6 校徽：浅色模式换成红色矢量版（原图是金色低清版）；
-   深色模式保留原金色版，红校徽在暗底上对比不足 */
-:root[data-ruc-theme="light"] #sui-app-page:has(.mainPage) .left.css-vc7il7 img[src*="logo-ruc.png"] {
-  content: url("../assets/logo-ruc-red.png");
+/* 6.6 校徽：浅色模式换成红色矢量版（原图是金色低清版），深色保留原金色版。
+   图片地址由 icons.js 用 chrome.runtime.getURL 给出（CSS 相对路径会按页面域名解析而 404），
+   这里只锁定尺寸。 */
+:root[data-ruc-theme="light"] #sui-app-page:has(.mainPage) .left.css-vc7il7 img[data-ruc-logo] {
   width: 100px;
   height: 107px;
   object-fit: contain;

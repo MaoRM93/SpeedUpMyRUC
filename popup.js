@@ -96,18 +96,6 @@ list.addEventListener("change", (event) => {
   persist();
 });
 
-Promise.all([
-  chrome.declarativeNetRequest.getEnabledRulesets(),
-  chrome.storage.local.get({ items: {} }),
-]).then(([enabled, stored]) => {
-  for (const item of ALL) {
-    state[item.key] = item.ruleset
-      ? enabled.includes(item.ruleset)
-      : stored.items[item.key] !== false;
-  }
-  render();
-});
-
 // 主题：跟随系统 / 浅色 / 深色，写入 storage.local.theme（默认 auto）
 const themeSeg = document.getElementById("themeSeg");
 let theme = "auto";
@@ -126,7 +114,29 @@ themeSeg.addEventListener("click", (event) => {
   chrome.storage.local.set({ theme });
 });
 
-chrome.storage.local.get({ theme: "auto" }).then(({ theme: stored }) => {
-  theme = stored === "light" || stored === "dark" ? stored : "auto";
+// 设置版本号：旧版本数据没有 schema 字段，按 0 处理；升级时在这里逐级迁移
+const SCHEMA = 1;
+
+async function loadSettings() {
+  const stored = await chrome.storage.local.get({ schema: 0, theme: "auto", items: {} });
+  if (stored.schema < SCHEMA) {
+    // v0 → v1：键名未变（items / theme），只需补写版本号
+    await chrome.storage.local.set({ schema: SCHEMA });
+    stored.schema = SCHEMA;
+  }
+  return stored;
+}
+
+Promise.all([
+  chrome.declarativeNetRequest.getEnabledRulesets(),
+  loadSettings(),
+]).then(([enabled, stored]) => {
+  for (const item of ALL) {
+    state[item.key] = item.ruleset
+      ? enabled.includes(item.ruleset)
+      : stored.items[item.key] !== false;
+  }
+  theme = stored.theme === "light" || stored.theme === "dark" ? stored.theme : "auto";
   paintTheme();
+  render();
 });
