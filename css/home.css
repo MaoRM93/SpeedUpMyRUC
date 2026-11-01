@@ -207,21 +207,64 @@
   opacity: 1;
 }
 
+/* 6.4 用户胶囊：137×42 的原圆角只有 18px，改为全圆角药丸 */
+#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-18o5bxv {
+  border-radius: 999px;
+}
+
+/* 6.5 模块标题图标底板（通知公告 / 日程中心 / AI简报 / 我的订阅）：
+   图标由 icons.js 重绘为自带浅色底的线性图标，底板改为透明
+   【脆弱锚点：.css-s684d9 / .css-189ts2f / .css-6e1lh】 */
+#sui-app-page:has(.mainPage) .main-content .css-s684d9,
+#sui-app-page:has(.mainPage) .main-content .css-189ts2f,
+#sui-app-page:has(.mainPage) .main-content .css-6e1lh {
+  background-color: transparent !important;
+}
+
+/* 站点按原图尺寸写死了内层容器（22/18/20px），重绘图标固定 30px，需同步放开；
+   内层是 flex 子项（flex-shrink:1 会把 30px 压回原比例宽），需一并锁定 flex-basis */
+#sui-app-page:has(.mainPage) .main-content .css-s684d9 > div,
+#sui-app-page:has(.mainPage) .main-content .css-189ts2f > div,
+#sui-app-page:has(.mainPage) .main-content .css-6e1lh > div {
+  flex: 0 0 30px !important;
+  min-width: 30px !important;
+  width: 30px !important;
+  height: 30px !important;
+}
+
+/* 6.6 校徽：浅色模式换成红色矢量版（原图是金色低清版）；
+   深色模式保留原金色版，红校徽在暗底上对比不足 */
+:root[data-ruc-theme="light"] #sui-app-page:has(.mainPage) .left.css-vc7il7 img[src*="logo-ruc.png"] {
+  content: url("../assets/logo-ruc-red.png");
+  width: 100px;
+  height: 107px;
+  object-fit: contain;
+}
+
 /* ---------- 7. 功能页签：Chrome 选项卡 ---------- */
 /* 「我的收藏 / 为您推荐」与「AI 智能服务」两处大页签原来用梯形背景图
    （47px 高、8px 35px 内边距），选中态凸起，和下方内容卡片断成两块。
-   这里改成浏览器选项卡：34px 高、8px 顶部圆角、选中项白底与卡片连成一体。
+   这里改成浏览器选项卡：36px 高、8px 顶部圆角、选中项白底与卡片连成一体。
    【脆弱锚点：页签类名 css-1sun605】 */
 #sui-app-page:has(.mainPage) .MuiTabs-root:has(.css-1sun605) {
   min-height: 0 !important;
-  height: 34px;
+  height: 36px;
   overflow: visible;
 }
 
 #sui-app-page:has(.mainPage) .MuiTabs-root:has(.css-1sun605) .MuiTabs-scroller,
 #sui-app-page:has(.mainPage) .MuiTabs-root:has(.css-1sun605) .MuiTabs-flexContainer {
-  height: 34px !important;
+  height: 36px !important;
   overflow: visible !important;
+}
+
+/* 7.1 取消卡片顶部的 white→#fcf7f0 渐变遮罩（.mbox::after，opacity .4）。
+   这层遮罩会压暗页签底色，在页签与内容面板之间留下一道横向分界线；
+   两张带页签的卡片（收藏 / AI 服务）统一移除。
+   【脆弱锚点：.css-6rc3s3、.css-1j21nac】 */
+#sui-app-page:has(.mainPage) .main-content .mbox.css-6rc3s3::after,
+#sui-app-page:has(.mainPage) .main-content .mbox.css-1j21nac::after {
+  display: none !important;
 }
 
 /* 首个页签内缩 8px，避开内容卡片左上角的圆角 */
@@ -235,9 +278,9 @@
 
 #sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605 {
   min-height: 0 !important;
-  height: 34px;
+  height: 36px;
   min-width: 0;
-  padding: 0 14px !important;
+  padding: 0 16px !important;
   margin: 0 !important;
   background: transparent !important;
   background-image: none !important;
@@ -251,7 +294,7 @@
 
 #sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605,
 #sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605 * {
-  font-size: 13px !important;
+  font-size: 15px !important;
   font-weight: 500 !important;
   line-height: 1 !important;
   color: inherit !important;
@@ -312,21 +355,14 @@
   background-color: var(--ruc-surface);
 }
 
-/* 9.2b 带页签的卡片（收藏 / AI 服务）顶部有一层 white→#fcf7f0 的渐变遮罩
-   （.mbox::after），暗底上会变成一条灰带，需整层移除 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .mbox.css-6rc3s3::after,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .mbox.css-1j21nac::after {
-  background-image: none !important;
-}
+/* 带页签卡片的渐变遮罩已在 7.1 统一移除，深色模式不再单独处理 */
 
 /* 9.3 浅色小面板：应用磁贴 #fdfcfc、图标底 #f5f8fc、日历事件行 #fffcf7、
    简报内块 #fffaf7、日历空态 rgba(255,255,255,.8) → 次级表面；订阅斑马纹沿用页面底色 */
 :root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-19q61fs,
 :root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1enuvvu,
 :root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1zq612,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-9lnpfq,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-s684d9,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-189ts2f {
+:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-9lnpfq {
   background-color: var(--ruc-surface-muted);
 }
 
@@ -458,12 +494,13 @@
   background-color: var(--ruc-divider);
 }
 
-/* 9.9 顶栏右侧 4 个入口：图标为品牌红 SVG，压黑反相成白色；
-   进入区外圈的白色径向光晕（::before 白色 radial-gradient）在暗底会变成亮块，需移除；
-   下方入口文字为硬编码 rgba(0,0,0,.88) */
+/* 9.9 顶栏右侧 4 个入口：图标是「品牌红 + 白色细节」的双色 SVG，
+   整块 brightness(0) 再反相会把两种颜色压成一个灰色剪影（内部线条全部丢失），
+   改为只提亮红色并保留白色细节；进入区外圈的白色径向光晕（::before 白色
+   radial-gradient）在暗底会变成亮块，需移除；下方入口文字为硬编码 rgba(0,0,0,.88) */
 :root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .ant-col:has(.css-yw8xxi) svg {
-  filter: brightness(0) invert(1);
-  opacity: 0.8;
+  filter: brightness(1.55) saturate(0.9);
+  opacity: 0.95;
 }
 
 :root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .ant-col:has(.css-yw8xxi) .css-1px51jt::before,

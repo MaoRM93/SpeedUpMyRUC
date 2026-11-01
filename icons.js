@@ -196,6 +196,18 @@
     "89516a7b-4f80-4c2d-989d-ee4cf9d349af": ["misc", "wifi"]
   };
 
+  // 首页模块标题图标：站点原图（icon_t*.png）是 3D 写实小图，与本站线性图标
+  // 语言不一致，按文件名映射重绘。icon_t7.png 同时用于「AI简报」与「我的订阅」，
+  // 按相邻标题文本区分（【脆弱锚点：.css-1ndi6d 标题文本】）
+  const MODULES = {
+    "icon_t1.png": ["acad", "megaphone"], // 通知公告
+    "icon_t2.png": ["serv", "calgrid"], // 日程中心
+    "icon_t7.png": ["admin", "bulb"] // AI简报（默认）
+  };
+  const MODULE_T7 = {
+    "我的订阅": ["fin", "bookstar"]
+  };
+
   const cache = new Map();
   function uri(catKey, glyphKey) {
     const key = catKey + ":" + glyphKey;
@@ -233,10 +245,38 @@
     img.src = url;
   }
 
+  function swapModule(img) {
+    if (!img || img.nodeName !== "IMG") return;
+    const src = img.getAttribute("src") || "";
+    if (src.indexOf("data:image/svg") === 0) return;
+    const file = /\/(icon_t\d+\.png)/.exec(src);
+    if (!file) return;
+    let hit = MODULES[file[1]];
+    if (file[1] === "icon_t7.png") {
+      const head = img.closest(".css-70qvj9");
+      const title = head && head.querySelector(".css-1ndi6d");
+      const name = title ? title.textContent.trim() : "";
+      hit = MODULE_T7[name] || hit;
+    }
+    if (!hit) return;
+    const url = uri(hit[0], hit[1]);
+    if (!url) return;
+    img.src = url;
+    img.style.setProperty("width", "30px", "important");
+    img.style.setProperty("height", "30px", "important");
+    img.style.setProperty("object-fit", "cover", "important");
+  }
+
   function scan(root) {
     const scope = root && root.querySelectorAll ? root : document;
-    scope.querySelectorAll('img[src*="appstore"]').forEach(swap);
-    if (scope !== document && scope.tagName === "IMG") swap(scope);
+    scope.querySelectorAll('img[src*="appstore"], img[src*="icon_t"]').forEach((img) => {
+      swap(img);
+      swapModule(img);
+    });
+    if (scope !== document && scope.tagName === "IMG") {
+      swap(scope);
+      swapModule(scope);
+    }
   }
 
   scan();
@@ -246,11 +286,14 @@
       for (const r of records) {
         if (r.type === "attributes") {
           swap(r.target);
+          swapModule(r.target);
         } else {
           for (const n of r.addedNodes) {
             if (n.nodeType !== 1) continue;
-            if (n.tagName === "IMG") swap(n);
-            else scan(n);
+            if (n.tagName === "IMG") {
+              swap(n);
+              swapModule(n);
+            } else scan(n);
           }
         }
       }
