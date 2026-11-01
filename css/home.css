@@ -1,0 +1,85 @@
+/* 数智人大 · 阶段 1 基础视觉体系
+   作用域：仅首页（#sui-app-page 内存在 .mainPage 时生效）
+   说明：带 .css-xxxx 哈希类的规则均经真实页面测量验证，标记为【脆弱锚点】。 */
+
+/* ---------- 1. 字体栈 ---------- */
+/* 不作用于 .page_data（品牌竖条）与 .mtitle 内的欢迎大标题，二者保留原字体 */
+#sui-app-page:has(.mainPage) .main-content {
+  font-family: var(--ruc-font);
+}
+
+/* ---------- 2. 文字层级 ---------- */
+#sui-app-page:has(.mainPage) .main-content {
+  color: var(--ruc-text);
+}
+
+/* 标语副标题（保留字号，仅降级为次级文字色） */
+#sui-app-page:has(.mainPage) .css-1dunxuf {
+  color: var(--ruc-text-2);
+}
+
+/* 模块标题：人大红 + 半粗【脆弱锚点：.css-1ndi6d，实测 4 处：
+   通知公告 / 日程中心 / AI简报 / 我的订阅】 */
+#sui-app-page:has(.mainPage) .main-content .css-1ndi6d {
+  color: var(--ruc-brand);
+  font-weight: 600;
+}
+
+/* ---------- 3. 卡片表面 ---------- */
+/* 站点已自带白卡（.mbox 中 2 个）与内部白块；统一圆角至 8px，保持零阴影 */
+#sui-app-page:has(.mainPage) .main-content .mbox {
+  border-radius: var(--ruc-radius-md);
+}
+
+/* ---------- 4. 搜索栏 ---------- */
+/* 现状：白底、无边框、2px 32px 32px 2px（右侧胶囊）。改为浅灰底 + 统一 8px 圆角 */
+#sui-app-page:has(.mainPage) .searchBox {
+  background-color: var(--ruc-surface-muted);
+  border-radius: var(--ruc-radius-md);
+  transition: background-color var(--ruc-motion-fast),
+    box-shadow var(--ruc-motion-fast);
+}
+
+/* 聚焦：底色转白 + 1px 人大红细边（用 inset 描边，不改变布局尺寸） */
+#sui-app-page:has(.mainPage) .searchBox:focus-within {
+  background-color: var(--ruc-surface);
+  box-shadow: inset 0 0 0 1px var(--ruc-brand);
+}
+
+/* 取消外层红色渐变描边框：实测为 searchBox 直接父级的 radial-gradient 背景，
+   改用语义选择器定位，不依赖哈希类 */
+#sui-app-page:has(.mainPage) div:has(> .searchBox) {
+  background-image: none;
+}
+
+/* 外层描边框取消后，为搜索组内的 AI 入口补独立品牌色底（原白字依赖该渐变） */
+#sui-app-page:has(.mainPage) div:has(> .searchBox) .space-x-1:has(img) {
+  background-color: var(--ruc-brand);
+  border-radius: var(--ruc-radius-sm);
+}
+
+#sui-app-page:has(.mainPage) .searchBox input {
+  color: var(--ruc-text);
+}
+
+#sui-app-page:has(.mainPage) .searchBox input::placeholder {
+  color: var(--ruc-text-3);
+}
+
+/* ---------- 5. Tab 标签页 ---------- */
+/* 选中态已是人大红（rgb(134,26,18)），仅将未选中态统一为次级文字色 */
+#sui-app-page:has(.mainPage) .main-content .MuiTab-root:not(.Mui-selected) {
+  color: var(--ruc-text-2);
+}
+
+#sui-app-page:has(.mainPage) .main-content .MuiTab-root {
+  transition: color var(--ruc-motion-fast);
+}
+
+/* ---------- 6. 动效 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  #sui-app-page:has(.mainPage) .searchBox,
+  #sui-app-page:has(.mainPage) .main-content .MuiTab-root {
+    transition: none !important;
+  }
+}
