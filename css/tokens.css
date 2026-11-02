@@ -8,10 +8,10 @@
   --ruc-brand-weak: rgba(134, 26, 18, 0.08);
 
   /* 表面 */
-  --ruc-bg: #fcf7f0;
+  --ruc-bg: #f3f4f6;
   --ruc-surface: #ffffff;
-  --ruc-surface-muted: #f5f6f8;
-  --ruc-surface-hover: #fafafa;
+  --ruc-surface-muted: #eceef1;
+  --ruc-surface-hover: #f7f8fa;
 
   /* 文字 */
   --ruc-text: #242424;
@@ -21,6 +21,19 @@
   /* 线条 */
   --ruc-divider: #e5e5e5;
   --ruc-hairline: rgba(0, 0, 0, 0.05);
+
+  /* 侧栏与页脚：默认取「简洁」配色（白侧栏 + 中性灰页脚），
+     由下方配色方案覆盖块改写，其余组件不受影响 */
+  --ruc-sidebar-bg: var(--ruc-surface);
+  --ruc-sidebar-line: var(--ruc-divider);
+  --ruc-sidebar-edge: var(--ruc-divider);
+  --ruc-sidebar-text: var(--ruc-text);
+  --ruc-sidebar-text-2: var(--ruc-text-2);
+  --ruc-sidebar-item-hover: var(--ruc-hairline);
+  --ruc-sidebar-selected-bg: var(--ruc-brand-weak);
+  --ruc-sidebar-selected-text: var(--ruc-brand);
+  --ruc-footer-bg: var(--ruc-surface-muted);
+  --ruc-footer-text: var(--ruc-text-2);
 
   /* 圆角 */
   --ruc-radius-sm: 6px;
@@ -43,21 +56,76 @@
   --ruc-space-6: 32px;
 }
 
-/* 深色令牌：保留站点暖色调，仅整体压暗；品牌红提亮以保证对比度 */
+/* 深色令牌：整体转为中性冷灰；人大红在暗底接近黑色，改用高对比的暖珊瑚红 */
 :root[data-ruc-theme="dark"] {
-  --ruc-brand: #e07264;
-  --ruc-brand-strong: #ef8a7c;
-  --ruc-brand-weak: rgba(224, 114, 100, 0.16);
+  --ruc-brand: #ff6b5e;
+  --ruc-brand-strong: #ff8a80;
+  --ruc-brand-weak: rgba(255, 107, 94, 0.16);
 
-  --ruc-bg: #171614;
-  --ruc-surface: #201f1d;
-  --ruc-surface-muted: #292725;
-  --ruc-surface-hover: #2c2a27;
+  --ruc-bg: #17181a;
+  --ruc-surface: #1f2124;
+  --ruc-surface-muted: #26282c;
+  --ruc-surface-hover: #2b2e33;
 
-  --ruc-text: #eae6df;
-  --ruc-text-2: #aba59c;
-  --ruc-text-3: #7e7970;
+  --ruc-text: #e6e8eb;
+  --ruc-text-2: #a9adb4;
+  --ruc-text-3: #7c8088;
 
-  --ruc-divider: #37342f;
+  --ruc-divider: #353840;
   --ruc-hairline: rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- 配色方案 ----------
+   html[data-ruc-palette] 由 theme.js 写入：clean（默认）/ tone / original。
+   只改写侧栏与页脚专用令牌（original 另加整页底色），卡片、文字、间距、
+   圆角等「简洁」设计改动全部保留。 */
+
+ /* 色调：浅绯红侧栏 + 米色页脚，浅色/深色均可用。
+    整页底色还原为站点暖米白，侧栏与内容区改用颜色区分，不再画竖分割线 */
+:root[data-ruc-palette="tone"] {
+  --ruc-sidebar-bg: #f5e3e1;
+  --ruc-sidebar-line: rgba(134, 26, 18, 0.14);
+  --ruc-sidebar-edge: transparent;
+  --ruc-sidebar-text: #3a2320;
+  --ruc-sidebar-text-2: #8a6a64;
+  --ruc-sidebar-item-hover: rgba(134, 26, 18, 0.06);
+  --ruc-sidebar-selected-bg: rgba(134, 26, 18, 0.12);
+  --ruc-sidebar-selected-text: var(--ruc-brand);
+  --ruc-footer-bg: #f0e7dc;
+  --ruc-footer-text: #7a6259;
+}
+
+:root[data-ruc-palette="tone"][data-ruc-theme="light"] {
+  --ruc-bg: #fcf7f0;
+}
+
+/* 色调深色：侧栏转暗绯红，页脚转暗米色，避免浅色块在暗底刺眼 */
+:root[data-ruc-palette="tone"][data-ruc-theme="dark"] {
+  --ruc-sidebar-bg: #2a1c1b;
+  --ruc-sidebar-line: rgba(255, 138, 128, 0.18);
+  --ruc-sidebar-edge: transparent;
+  --ruc-sidebar-text: #f0e2df;
+  --ruc-sidebar-text-2: #bd9f99;
+  --ruc-sidebar-item-hover: rgba(255, 107, 94, 0.10);
+  --ruc-sidebar-selected-bg: rgba(255, 107, 94, 0.18);
+  --ruc-sidebar-selected-text: var(--ruc-brand);
+  --ruc-footer-bg: #241d1b;
+  --ruc-footer-text: #a6908a;
+}
+
+/* 原始：站点最初的红侧栏 + 暖米白整页底色；页脚按约定保留中性灰。
+   theme.js 会把该配色强制为浅色，因此无需深色分支。
+   选中胶囊改为半透明白底 + 白字，红底上仍清晰可读。 */
+:root[data-ruc-palette="original"] {
+  --ruc-bg: #fcf7f0;
+  --ruc-sidebar-bg: #861a12;
+  --ruc-sidebar-line: rgba(255, 255, 255, 0.22);
+  --ruc-sidebar-edge: rgba(255, 255, 255, 0.16);
+  --ruc-sidebar-text: #ffffff;
+  --ruc-sidebar-text-2: rgba(255, 255, 255, 0.82);
+  --ruc-sidebar-item-hover: rgba(255, 255, 255, 0.10);
+  --ruc-sidebar-selected-bg: rgba(255, 255, 255, 0.16);
+  --ruc-sidebar-selected-text: #ffffff;
+  --ruc-footer-bg: var(--ruc-surface-muted);
+  --ruc-footer-text: var(--ruc-text-2);
 }

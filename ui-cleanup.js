@@ -135,7 +135,7 @@
   }
 
   function leafOf(text) {
-    for (const el of document.querySelectorAll("#sui-app-page *")) {
+    for (const el of document.querySelectorAll(".sui-app-page *")) {
       if (el.children.length) continue;
       if (!(el.textContent || "").includes(text)) continue;
       if (el.getBoundingClientRect().height < 1) continue;
@@ -149,7 +149,7 @@
   function hideBlock(text, key) {
     if (document.querySelector(`[data-ruc-fast-item="${key}"]`)) return;
     const main =
-      document.querySelector("#sui-app-page .mainPage .main-content") ||
+      document.querySelector(".sui-app-page .mainPage .main-content") ||
       document.querySelector(".mainPage .main-content");
     if (!main) return;
     let leaf = null;
@@ -232,7 +232,28 @@
     delete document.documentElement.dataset.rucFastMoved;
   }
 
+  // 站点把「AI中心」「AI智能服务」写成了中英文连排，统一在 I 与汉字之间补一个空格
+  const AI_LABELS = [
+    ["AI中心", "AI 中心"],
+    ["AI智能服务", "AI 智能服务"],
+  ];
+
+  function spaceAILabels() {
+    for (const [from, to] of AI_LABELS) {
+      for (const el of document.querySelectorAll(".sui-app-page span, .sui-app-page div")) {
+        if (el.children.length) continue;
+        if ((el.textContent || "").trim() !== from) continue;
+        el.textContent = to;
+        const trigger = el.closest("button, a");
+        if (trigger && trigger.getAttribute("title") === from) {
+          trigger.setAttribute("title", to);
+        }
+      }
+    }
+  }
+
   function scan() {
+    spaceAILabels();
     if (++scans > MAX_SCANS) return;
     for (const it of ALL) {
       if (!hostOk(it.key)) continue;
@@ -270,37 +291,44 @@
     });
   }
 
-  chrome.storage.local.get({ items: {} }).then(({ items }) => {
-    for (const k of KEYS) if (items[k] === false) flags[k] = false;
-    document.documentElement.dataset.rucFast = "101.0.0.100";
-    applyCSS();
-    if (document.body) {
-      start();
-    } else {
-      document.addEventListener("DOMContentLoaded", start, { once: true });
-    }
-  });
+  // 远程禁用守卫（guard.js）先行；被禁用时不再注入样式、不再扫描页面
+  const gate = globalThis.__rucGate || Promise.resolve(true);
 
-  // 菜单勾选后即时生效，无需刷新
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area !== "local" || !changes.items) return;
-    const next = changes.items.newValue || {};
-    let reapply = false;
-    for (const it of ALL) {
-      const k = it.key;
-      const was = applied(it);
-      flags[k] = next[k] !== false;
-      const now = applied(it);
-      if (was && !now) {
-        restore(k);
-        if (k === "reorder") restoreFavorites();
+  gate.then((ok) => {
+    if (!ok) return;
+
+    chrome.storage.local.get({ items: {} }).then(({ items }) => {
+      for (const k of KEYS) if (items[k] === false) flags[k] = false;
+      document.documentElement.dataset.rucFast = "102.0.0.115";
+      applyCSS();
+      if (document.body) {
+        start();
+      } else {
+        document.addEventListener("DOMContentLoaded", start, { once: true });
       }
-      if (!was && now) reapply = true;
-    }
-    applyCSS();
-    if (reapply && document.body) {
-      scans = 0;
-      scan();
-    }
+    });
+
+    // 菜单勾选后即时生效，无需刷新
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area !== "local" || !changes.items) return;
+      const next = changes.items.newValue || {};
+      let reapply = false;
+      for (const it of ALL) {
+        const k = it.key;
+        const was = applied(it);
+        flags[k] = next[k] !== false;
+        const now = applied(it);
+        if (was && !now) {
+          restore(k);
+          if (k === "reorder") restoreFavorites();
+        }
+        if (!was && now) reapply = true;
+      }
+      applyCSS();
+      if (reapply && document.body) {
+        scans = 0;
+        scan();
+      }
+    });
   });
 })();

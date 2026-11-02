@@ -1,65 +1,106 @@
-/* 数智人大 · 阶段 1 基础视觉体系 + 阶段 2 搜索栏
-   作用域：仅首页（#sui-app-page 内存在 .mainPage 时生效）
+/* 数智人大 · 首页与子页面视觉体系
+   作用域：.sui-app-page（首页 id 为 sui-app-page，子页面 id 带路由后缀，
+   如 sui-app-page_/，因此不能用 #id 作用域，统一用类）
    说明：带 .css-xxxx 哈希类的规则均经真实页面测量验证，标记为【脆弱锚点】。 */
 
 /* ---------- 1. 字体栈 ---------- */
-/* 不作用于 .page_data（品牌竖条）与 .mtitle 内的欢迎大标题，二者保留原字体 */
-#sui-app-page:has(.mainPage) .main-content {
-  font-family: var(--ruc-font);
+/* 全站默认无衬线：左侧栏（.left）、顶部欢迎标题（.mtitle）与三处放大的组标题
+   （.css-tas7ym）之外的任何文字都不再使用思源宋体。 */
+.sui-app-page,
+.sui-app-page *:not(.left):not(.left *):not(.mtitle):not(.mtitle *):not(.css-tas7ym):not(.css-tas7ym *) {
+  font-family: var(--ruc-font) !important;
+}
+
+/* 顶部欢迎标题及副标题保留衬线（站点原字体 SourceHanSerifCN-Bold） */
+.sui-app-page .mtitle,
+.sui-app-page .mtitle * {
+  font-family: "SourceHanSerifCN-Bold", "Noto Serif SC", "Songti SC", STSong,
+    "SimSun", serif !important;
+}
+
+/* 放大的组标题（AI智能服务 / 快捷导航 / 资讯订阅）恢复站点原衬线字体；
+   保持 400 字重，避免对 Bold 字面二次合成加粗
+   【脆弱锚点：.css-tas7ym，实测 3 处，40px】 */
+.sui-app-page .main-content .css-tas7ym,
+.sui-app-page .main-content .css-tas7ym * {
+  font-family: "SourceHanSerifCN-Bold", "Noto Serif SC", "Songti SC", STSong,
+    "SimSun", serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+}
+
+/* 资讯订阅内的「我的订阅」标题与图标整行移除，只保留右侧操作与订阅列表
+   【脆弱锚点：.css-1g8w000，实测全页唯一】 */
+.sui-app-page .main-content .css-1g8w000 {
+  display: none !important;
 }
 
 /* ---------- 2. 文字层级 ---------- */
-#sui-app-page:has(.mainPage) .main-content {
+.sui-app-page .main-content {
   color: var(--ruc-text);
 }
 
 /* 标语副标题（保留字号，仅降级为次级文字色） */
-#sui-app-page:has(.mainPage) .css-1dunxuf {
+.sui-app-page .css-1dunxuf {
   color: var(--ruc-text-2);
 }
 
 /* 模块标题：人大红 + 半粗【脆弱锚点：.css-1ndi6d，实测 4 处：
    通知公告 / 日程中心 / AI简报 / 我的订阅】 */
-#sui-app-page:has(.mainPage) .main-content .css-1ndi6d {
+.sui-app-page .main-content .css-1ndi6d {
   color: var(--ruc-brand);
   font-weight: 600;
+  font-family: var(--ruc-font) !important;
 }
 
 /* ---------- 3. 卡片表面 ---------- */
 /* 站点已自带白卡（.mbox 中 2 个）与内部白块；统一圆角至 8px，保持零阴影 */
-#sui-app-page:has(.mainPage) .main-content .mbox {
+.sui-app-page .main-content .mbox {
   border-radius: var(--ruc-radius-md);
+}
+
+/* 3.0 应用磁贴卡片：站点底色 #fdfcfc 偏浅黄，在白色面板上像一个独立小方块。
+   去掉底框，让图标与文字直接落在面板底色上。
+   【脆弱锚点：.css-19q61fs，实测 145×91、4px 圆角、无边框无阴影】 */
+.sui-app-page .main-content .css-19q61fs {
+  background-color: transparent !important;
+}
+
+/* 3.0.1 应用磁贴名称与「添加」按钮：站点原为 700 粗体，统一改为常规字重，
+   与卡片内其他文字保持同一层级 */
+.sui-app-page .main-content .css-1uc7y1h {
+  font-weight: 400 !important;
 }
 
 /* 3.1 顶部留白收敛：标题下 140px 原为装饰插画预留，插画已隐藏则收至 40px
    头部高度改 auto 自适应，搜索栏与右侧入口整体上移 100px【脆弱锚点：.mtitle】
    注意：菜单项「标题下留白压缩」的内联样式带 !important（24px，原为压 140px），
    会覆盖本规则，故这里同样用 !important 固定为 40px */
-#sui-app-page:has(.mainPage) .NoHeaderBg2.header {
+.sui-app-page .NoHeaderBg2.header {
   height: auto;
 }
 
-#sui-app-page:has(.mainPage) .NoHeaderBg2.header .mtitle {
+.sui-app-page .NoHeaderBg2.header .mtitle {
   margin-bottom: 40px !important;
 }
 
 /* 3.2 顶栏右侧 4 个入口（待办/消息/邮箱/云盘）：站点把 .dataNum 定位在列容器上方
    5px（高度 57 > 容器 56，向上溢出），与搜索胶囊中线相差 5px。用相对位移拉回，
    不改布局占位也不影响点击热区 */
-#sui-app-page:has(.mainPage) .header .ant-col:has(.dataNum) .css-v2kfba {
+.sui-app-page .header .ant-col:has(.dataNum) .css-v2kfba {
   position: relative;
   top: 5px;
 }
 
 /* ---------- 4. 搜索栏（Google 单行胶囊） ---------- */
 /* 4.1 外层白色底板透明【脆弱锚点：.css-pbq6m1，433×56 占位不变】 */
-#sui-app-page:has(.mainPage) .css-pbq6m1 {
+.sui-app-page .css-pbq6m1 {
   background-color: transparent;
 }
 
 /* 4.2 原红色渐变框改为胶囊本体（保留 4px 内缩，425×48）【脆弱锚点：.css-1fi09qg】
    1px 描边用 inset box-shadow 实现，不改变任何尺寸 */
-#sui-app-page:has(.mainPage) .css-1fi09qg {
+.sui-app-page .css-1fi09qg {
   position: relative;
   width: 100%;
   height: 48px;
@@ -71,16 +112,16 @@
   transition: box-shadow var(--ruc-motion-fast);
 }
 
-#sui-app-page:has(.mainPage) .css-1fi09qg:hover {
+.sui-app-page .css-1fi09qg:hover {
   box-shadow: inset 0 0 0 1px #dfe1e5, 0 1px 6px rgba(32, 33, 36, 0.18);
 }
 
-#sui-app-page:has(.mainPage) .css-1fi09qg:focus-within {
+.sui-app-page .css-1fi09qg:focus-within {
   box-shadow: inset 0 0 0 1px #dfe1e5, 0 1px 6px rgba(32, 33, 36, 0.24);
 }
 
 /* 4.3 输入区透明，由胶囊承担底色与描边 */
-#sui-app-page:has(.mainPage) .searchBox {
+.sui-app-page .searchBox {
   flex: 1 1 auto;
   min-width: 0;
   background-color: transparent;
@@ -88,13 +129,13 @@
   padding: 4px 4px 4px 18px;
 }
 
-#sui-app-page:has(.mainPage) .searchBox:focus-within {
+.sui-app-page .searchBox:focus-within {
   background-color: transparent;
   box-shadow: none;
 }
 
 /* 输入组右侧留出 38px，避免文字钻到 AI 图标下面 */
-#sui-app-page:has(.mainPage) .searchBox > div:first-child {
+.sui-app-page .searchBox > div:first-child {
   flex: 1 1 auto;
   min-width: 0;
   margin-right: 38px;
@@ -102,7 +143,7 @@
 
 /* 4.4 AI 入口：从「问AI」胶囊降级为放大镜左侧 28px 圆形图标
    right:80px = 胶囊内边距 4 + 图标组 66 + 间距 10，定位后不占布局流 */
-#sui-app-page:has(.mainPage) .css-1fi09qg > .css-td0tw1 {
+.sui-app-page .css-1fi09qg > .css-td0tw1 {
   position: absolute;
   right: 80px;
   top: 50%;
@@ -122,149 +163,309 @@
   transition: background-color var(--ruc-motion-fast);
 }
 
-#sui-app-page:has(.mainPage) .css-1fi09qg > .css-td0tw1:hover {
+.sui-app-page .css-1fi09qg > .css-td0tw1:hover {
   background-color: rgba(0, 0, 0, 0.06);
 }
 
 /* 隐藏「问AI」文字，仅留图标 */
-#sui-app-page:has(.mainPage) .css-td0tw1 > span {
+.sui-app-page .css-td0tw1 > span {
   display: none;
 }
 
-#sui-app-page:has(.mainPage) .css-td0tw1 img {
+.sui-app-page .css-td0tw1 img {
   width: 18px;
   height: 18px;
   filter: brightness(0) saturate(0) opacity(0.55);
   transition: filter var(--ruc-motion-fast);
 }
 
-#sui-app-page:has(.mainPage) .css-td0tw1:hover img {
+.sui-app-page .css-td0tw1:hover img {
   filter: brightness(0) saturate(0) opacity(0.8);
 }
 
-#sui-app-page:has(.mainPage) .searchBox input {
+.sui-app-page .searchBox input {
   color: var(--ruc-text);
 }
 
-#sui-app-page:has(.mainPage) .searchBox input::placeholder {
+.sui-app-page .searchBox input::placeholder {
   color: var(--ruc-text-3);
+}
+
+/* 4.5 话筒图标（.huatong 内联 SVG）：站点给路径上了人大红，与已降级为灰色的
+   AI 入口图标风格不一致。统一改为次级文字灰，深浅色自动跟随令牌
+   【脆弱锚点：.css-1fi09qg .huatong】 */
+.sui-app-page .css-1fi09qg .huatong svg,
+.sui-app-page .css-1fi09qg .huatong svg path {
+  fill: var(--ruc-text-3) !important;
+  stroke: none !important;
+}
+
+.sui-app-page .css-1fi09qg .huatong:hover svg,
+.sui-app-page .css-1fi09qg .huatong:hover svg path {
+  fill: var(--ruc-text-2) !important;
 }
 
 /* ---------- 5. Tab 标签页 ---------- */
 /* 选中态已是人大红（rgb(134,26,18)），仅将未选中态统一为次级文字色 */
-#sui-app-page:has(.mainPage) .main-content .MuiTab-root:not(.Mui-selected) {
+.sui-app-page .main-content .MuiTab-root:not(.Mui-selected) {
   color: var(--ruc-text-2);
 }
 
-#sui-app-page:has(.mainPage) .main-content .MuiTab-root {
+.sui-app-page .main-content .MuiTab-root {
   transition: color var(--ruc-motion-fast);
 }
 
 /* ---------- 6. 左侧导航 ---------- */
-/* 6.1 容器：白底 + 右侧 1px 分割线；品牌竖条 .page_data（含校徽）保持原样
+/* 6.1 容器：底色与右侧分割线走配色令牌（默认白底中性灰，见 tokens.css）；
+   品牌竖条 .page_data（含校徽）保持原样
    【脆弱锚点：.left.css-vc7il7，宽度 260 不变，仅换底色】 */
-#sui-app-page:has(.mainPage) .left.css-vc7il7 {
-  background-color: var(--ruc-surface);
-  box-shadow: inset -1px 0 0 var(--ruc-divider);
+.sui-app-page .left.css-vc7il7 {
+  background-color: var(--ruc-sidebar-bg) !important;
+  box-shadow: inset -1px 0 0 var(--ruc-sidebar-edge) !important;
 }
 
-/* 6.2 菜单项：深色文字，hover / 选中用圆角浅底替代原金色下划线
-   【脆弱锚点：.css-o7dev2，实测 75×40 @x=115，纵向间距 17px 不变】 */
-#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2 {
-  width: 180px;
+/* 6.2 菜单项：深色文字，hover / 选中用圆角浅底替代原金色下划线。
+   选中胶囊不再按文字宽度计算：先让导航外层撑满侧栏可用宽度，菜单项再取 100%，
+   这样胶囊比文字宽一截，且随侧栏/窗口宽度实时缩放。
+   【脆弱锚点：.css-o7dev2 实测 75×40；父链 .css-1twyzz2 仅 35px 宽，
+   根因是站点按菜单外宽反推容器宽度，需先把容器改成 100%】 */
+.sui-app-page .left.css-vc7il7 .css-ddfc6h > div:has(> .css-1twyzz2) {
+  width: 100% !important;
+  padding: 0 var(--ruc-space-2);
+  box-sizing: border-box;
+}
+
+.sui-app-page .left.css-vc7il7 .css-o7dev2 {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  min-width: 0;
+  box-sizing: border-box;
   border-radius: var(--ruc-radius-sm);
-  color: var(--ruc-text);
+  color: var(--ruc-sidebar-text) !important;
   transition: background-color var(--ruc-motion-fast), color var(--ruc-motion-fast);
 }
 
-#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2 button,
-#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2 .name {
-  color: inherit;
+/* 父链原本被菜单外宽锁在 35px，内容无法收缩时会把胶囊挤出去；
+   一并改为 100%，保证窄容器里先缩父链再缩胶囊 */
+.sui-app-page .left.css-vc7il7 .css-1twyzz2,
+.sui-app-page .left.css-vc7il7 .mainNav.css-ycwqik {
+  width: 100% !important;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
-#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2:hover {
-  background-color: rgba(0, 0, 0, 0.04);
+.sui-app-page .left.css-vc7il7 .css-o7dev2 button,
+.sui-app-page .left.css-vc7il7 .css-o7dev2 .name,
+.sui-app-page .left.css-vc7il7 .css-o7dev2 span {
+  color: inherit !important;
 }
 
-#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2.selected {
-  background-color: var(--ruc-brand-weak);
-  color: var(--ruc-brand);
+.sui-app-page .left.css-vc7il7 .css-o7dev2:hover {
+  background-color: var(--ruc-sidebar-item-hover);
 }
 
-#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2.selected button {
+.sui-app-page .left.css-vc7il7 .css-o7dev2.selected {
+  background-color: var(--ruc-sidebar-selected-bg);
+  color: var(--ruc-sidebar-selected-text) !important;
+}
+
+.sui-app-page .left.css-vc7il7 .css-o7dev2.selected button {
   font-weight: 600;
 }
 
 /* 去掉原选中项的金色 37×1 下划线 */
-#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2.selected::after {
+.sui-app-page .left.css-vc7il7 .css-o7dev2.selected::after {
   display: none;
 }
 
-/* 6.3 底部链接行：白字改次级文字色，白色图标转深灰，白色分隔线改中性灰
+/* 6.3 底部链接行：白字改侧栏次级文字色，白色图标转深灰，白色分隔线改中性灰
    【脆弱锚点：.css-1ra27ml 链接行 / .css-adllax、.css-xz1zqc 1×16 分隔线】 */
-#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-1ra27ml span {
-  color: var(--ruc-text-2);
+.sui-app-page .left.css-vc7il7 .css-1ra27ml span {
+  color: var(--ruc-sidebar-text-2);
 }
 
-#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-1ra27ml img {
+.sui-app-page .left.css-vc7il7 .css-1ra27ml img {
   filter: brightness(0) saturate(0);
   opacity: 0.45;
 }
 
-#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-adllax,
-#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-xz1zqc {
-  background-color: #d5d5d5;
+.sui-app-page .left.css-vc7il7 .css-adllax,
+.sui-app-page .left.css-vc7il7 .css-xz1zqc {
+  background-color: var(--ruc-sidebar-line);
   opacity: 1;
 }
 
-/* 6.4 用户胶囊：137×42 的原圆角只有 18px，改为全圆角药丸 */
-#sui-app-page:has(.mainPage) .left.css-vc7il7 .css-18o5bxv {
-  border-radius: 999px;
+/* 原始配色：红侧栏上保留站点原本的白图标，不做灰度处理
+   （其他「简洁」改动如全圆角胶囊、常驻侧栏等一律保留） */
+:root[data-ruc-palette="original"] .sui-app-page .left.css-vc7il7 .css-1ra27ml img {
+  filter: none;
+  opacity: 0.88;
 }
+
+/* 6.4 用户胶囊：站点给人大红药丸底 + 白字（137×42）。去掉底色、阴影与
+   按钮各态的填充，只留头像、姓名与箭头；文字改跟侧栏令牌，
+   三种配色与深浅模式下都清晰可读
+   【脆弱锚点：.css-18o5bxv】 */
+.sui-app-page .left.css-vc7il7 .css-18o5bxv {
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border-radius: 999px;
+  color: var(--ruc-sidebar-text) !important;
+}
+
+.sui-app-page .left.css-vc7il7 .css-18o5bxv:hover,
+.sui-app-page .left.css-vc7il7 .css-18o5bxv:active,
+.sui-app-page .left.css-vc7il7 .css-18o5bxv:focus,
+.sui-app-page .left.css-vc7il7 .css-18o5bxv.Mui-focusVisible {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.sui-app-page .left.css-vc7il7 .css-18o5bxv:hover {
+  background-color: var(--ruc-sidebar-item-hover) !important;
+}
+
+.sui-app-page .left.css-vc7il7 .css-18o5bxv span,
+.sui-app-page .left.css-vc7il7 .css-18o5bxv svg {
+  color: var(--ruc-sidebar-text) !important;
+}
+
+/* 6.4.1 悬停展开的用户信息卡（div.item，178×52）：站点只给 4px 圆角，
+   放大后接近直角，这里统一为浮动卡片圆角 */
+.sui-app-page .selectUser .item {
+  border-radius: var(--ruc-radius-lg) !important;
+}
+
+/* 6.4.2 侧栏常驻：站点把 .left 设为 absolute，滚动时会跟着整页滚走；且收起动画
+   没有过渡，视觉上很突兀。桌面宽度下改为 fixed 钉在视口左侧，只让右侧内容滚动，
+   同时锁死 transform / 可见性，避免站点的收起状态把侧栏平移出屏。
+   窄屏保持站点原生的响应式行为。 */
+@media (min-width: 1024px) {
+  /* 从子页面返回首页后侧栏 fixed 会失效：站点在路由切换后给 shell
+     .css-15621uj 保留了内联 `filter: blur(0px)`，非 none 的 filter 会给
+     fixed 后代另建包含块，侧栏于是相对 shell 定位、随文档一起滚走。
+     这里统一清掉 filter（站点仅用它做页面切换的过渡虚化）。 */
+  .sui-app-page .css-15621uj {
+    filter: none !important;
+  }
+
+  .sui-app-page .left.css-vc7il7 {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: auto !important;
+    height: 100vh !important;
+    transform: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .sui-app-page .left.css-vc7il7 .page-menu {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* 侧栏内的 fadeInUp 入场动画依赖站点滚动定位；改成 fixed 后动画会停在下移
+     392px / 140px 的起始帧，把菜单和底部用户卡推出视口。这里直接落位。 */
+  .sui-app-page .left.css-vc7il7 .css-ddfc6h,
+  .sui-app-page .left.css-vc7il7 .css-dkqtee {
+    transform: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  /* 站点滚动后会把外层左内边距从 205px 砍到 45px（侧栏收起、内容左移），
+     与固定的 260px 侧栏重叠。这里锁定展开态，只让右侧内容滚动。
+     子页面（.listss）同样锁定展开，见下方规则。
+     【关键】站点对子页面另有 `.css-15621uj.active.listss{padding-left:0!important}`，
+     特异性 (0,3,0) 且样式表加载更晚；这里必须带上 .active 提到 (0,4,0) 才能覆盖。 */
+  .sui-app-page .css-15621uj:not(.listss),
+  .sui-app-page .css-15621uj.active.listss {
+    padding-left: 205px !important;
+  }
+
+  /* 侧栏锁定展开后，站点原生的 70px 收起态迷你栏（.left-min，红底、z-index 999）
+     仍浮在最上层，遮住 .page_data 与菜单左缘，形成“双层侧栏”。
+     桌面宽度下首页与子页面都隐藏它。 */
+  .sui-app-page .left-min {
+    display: none !important;
+  }
+
+  /* 子页面（办事大厅 / 管理平台 / 资讯中心等）：站点原本只保留 70px 迷你栏，
+     完整侧栏被 `.css-15621uj.active.listss > .left { display:none !important }`
+     隐藏（特异性高于普通规则，必须带完整父链才能覆盖）。这里强制展开完整侧栏，
+     改用与首页一致的固定 260px 白底导航，同时隐藏 205px 红色离屏抽屉。 */
+  .sui-app-page .css-15621uj.active.listss > .left.css-vc7il7 {
+    display: flex !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: auto !important;
+    width: 260px !important;
+    height: 100vh !important;
+    transform: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 999 !important;
+  }
+
+  .sui-app-page .left.css-butkle {
+    display: none !important;
+  }
+}
+
 
 /* 6.5 模块标题图标底板（通知公告 / 日程中心 / AI简报 / 我的订阅）：
    图标由 icons.js 重绘为自带浅色底的线性图标，底板改为透明
    【脆弱锚点：.css-s684d9 / .css-189ts2f / .css-6e1lh】 */
-#sui-app-page:has(.mainPage) .main-content .css-s684d9,
-#sui-app-page:has(.mainPage) .main-content .css-189ts2f,
-#sui-app-page:has(.mainPage) .main-content .css-6e1lh {
+.sui-app-page .main-content .css-s684d9,
+.sui-app-page .main-content .css-189ts2f,
+.sui-app-page .main-content .css-6e1lh {
   background-color: transparent !important;
 }
 
-/* 站点按原图尺寸写死了内层容器（22/18/20px），重绘图标固定 30px，需同步放开；
-   内层是 flex 子项（flex-shrink:1 会把 30px 压回原比例宽），需一并锁定 flex-basis */
-#sui-app-page:has(.mainPage) .main-content .css-s684d9 > div,
-#sui-app-page:has(.mainPage) .main-content .css-189ts2f > div,
-#sui-app-page:has(.mainPage) .main-content .css-6e1lh > div {
-  flex: 0 0 30px !important;
-  min-width: 30px !important;
-  width: 30px !important;
-  height: 30px !important;
+/* 站点按原图尺寸写死了内层容器（22/18/20px），重绘图标固定 34px，需同步放开；
+   内层是 flex 子项（flex-shrink:1 会把 34px 压回原比例宽），需一并锁定 flex-basis */
+.sui-app-page .main-content .css-s684d9 > div,
+.sui-app-page .main-content .css-189ts2f > div,
+.sui-app-page .main-content .css-6e1lh > div {
+  flex: 0 0 34px !important;
+  min-width: 34px !important;
+  width: 34px !important;
+  height: 34px !important;
 }
 
 /* 6.6 校徽：浅色模式换成红色矢量版（原图是金色低清版），深色保留原金色版。
    图片地址由 icons.js 用 chrome.runtime.getURL 给出（CSS 相对路径会按页面域名解析而 404），
    这里只锁定尺寸。 */
-:root[data-ruc-theme="light"] #sui-app-page:has(.mainPage) .left.css-vc7il7 img[data-ruc-logo] {
+:root[data-ruc-theme="light"] .sui-app-page .left.css-vc7il7 img[data-ruc-logo] {
   width: 100px;
   height: 107px;
   object-fit: contain;
 }
 
-/* ---------- 7. 功能页签：Chrome 选项卡 ---------- */
+/* ---------- 7. 功能页签：圆角胶囊 ---------- */
 /* 「我的收藏 / 为您推荐」与「AI 智能服务」两处大页签原来用梯形背景图
    （47px 高、8px 35px 内边距），选中态凸起，和下方内容卡片断成两块。
-   这里改成浏览器选项卡：36px 高、8px 顶部圆角、选中项白底与卡片连成一体。
+   这里改为独立的圆角胶囊：四角 10px、字号放大到 17px，选中项用人大红文字
+   + 浅红底作为标志，底部四角同样圆润，与下方内容面板之间留出间隙。
    【脆弱锚点：页签类名 css-1sun605】 */
-#sui-app-page:has(.mainPage) .MuiTabs-root:has(.css-1sun605) {
+.sui-app-page .MuiTabs-root:has(.css-1sun605) {
   min-height: 0 !important;
-  height: 36px;
+  height: 44px;
+  margin-bottom: 8px;
   overflow: visible;
 }
 
-#sui-app-page:has(.mainPage) .MuiTabs-root:has(.css-1sun605) .MuiTabs-scroller,
-#sui-app-page:has(.mainPage) .MuiTabs-root:has(.css-1sun605) .MuiTabs-flexContainer {
-  height: 36px !important;
+.sui-app-page .MuiTabs-root:has(.css-1sun605) .MuiTabs-scroller,
+.sui-app-page .MuiTabs-root:has(.css-1sun605) .MuiTabs-flexContainer {
+  height: 44px !important;
   overflow: visible !important;
 }
 
@@ -272,254 +473,634 @@
    这层遮罩会压暗页签底色，在页签与内容面板之间留下一道横向分界线；
    两张带页签的卡片（收藏 / AI 服务）统一移除。
    【脆弱锚点：.css-6rc3s3、.css-1j21nac】 */
-#sui-app-page:has(.mainPage) .main-content .mbox.css-6rc3s3::after,
-#sui-app-page:has(.mainPage) .main-content .mbox.css-1j21nac::after {
+.sui-app-page .main-content .mbox.css-6rc3s3::after,
+.sui-app-page .main-content .mbox.css-1j21nac::after {
   display: none !important;
 }
 
-/* 首个页签内缩 8px，避开内容卡片左上角的圆角 */
-#sui-app-page:has(.mainPage) .MuiTabs-root:has(.css-1sun605) .MuiTabs-flexContainer {
-  padding-left: var(--ruc-space-2);
+/* 7.2 标签左缘与下方内容面板对齐：站点给 flexContainer 加了 8px 左内边距，
+   导致首 tab 比面板右缩 8px，去掉后两者左边缘落在同一条直线上。 */
+.sui-app-page .MuiTabs-root:has(.css-1sun605) .MuiTabs-flexContainer {
+  padding-left: 0 !important;
 }
 
-#sui-app-page:has(.mainPage) .MuiTabs-root:has(.css-1sun605) .MuiTabs-indicator {
+.sui-app-page .MuiTabs-root:has(.css-1sun605) .MuiTabs-indicator {
   display: none !important;
 }
 
-#sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605 {
+/* 7.3 未选中为次级文字色，选中为人大红 + 8% 红底；胶囊四角全圆，
+   底部不再与内容面板硬拼，切换时底色与文字平滑过渡。 */
+.sui-app-page .main-content .MuiTab-root.css-1sun605 {
   min-height: 0 !important;
-  height: 36px;
+  height: 44px;
   min-width: 0;
-  padding: 0 16px !important;
+  padding: 0 18px !important;
   margin: 0 !important;
   background: transparent !important;
   background-image: none !important;
   border: 1px solid transparent;
-  border-bottom: 0;
-  border-radius: var(--ruc-radius-md) var(--ruc-radius-md) 0 0;
+  border-radius: 10px !important;
   color: var(--ruc-text-2) !important;
   letter-spacing: 0 !important;
-  transition: background-color var(--ruc-motion-fast), color var(--ruc-motion-fast);
+  transition: background-color var(--ruc-motion-fast), color var(--ruc-motion-fast),
+    box-shadow var(--ruc-motion-fast);
 }
 
-#sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605,
-#sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605 * {
-  font-size: 15px !important;
+/* 注意：color: inherit 只能给后代，若同时命中标签根节点会把上面设置的
+   未选中/选中色覆盖成父级继承色，两者就变成同一种颜色 */
+.sui-app-page .main-content .MuiTab-root.css-1sun605 {
+  font-size: 17px !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+}
+
+.sui-app-page .main-content .MuiTab-root.css-1sun605 * {
+  font-size: 17px !important;
   font-weight: 500 !important;
   line-height: 1 !important;
   color: inherit !important;
 }
 
-#sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605:hover {
+.sui-app-page .main-content .MuiTab-root.css-1sun605:hover {
   background-color: var(--ruc-hairline) !important;
 }
 
-#sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605.Mui-selected {
-  background-color: var(--ruc-surface) !important;
-  border-color: #dcdfe4;
-  color: var(--ruc-text) !important;
+.sui-app-page .main-content .MuiTab-root.css-1sun605.Mui-selected {
+  background-color: var(--ruc-brand-weak) !important;
+  border-color: transparent;
+  color: var(--ruc-brand) !important;
 }
 
-#sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605.Mui-selected:hover {
-  background-color: var(--ruc-surface) !important;
+.sui-app-page .main-content .MuiTab-root.css-1sun605.Mui-selected * {
+  font-weight: 600 !important;
 }
+
+.sui-app-page .main-content .MuiTab-root.css-1sun605.Mui-selected:hover {
+  background-color: var(--ruc-brand-weak) !important;
+}
+
 
 /* ---------- 8. 动效 ---------- */
 @media (prefers-reduced-motion: reduce) {
-  #sui-app-page:has(.mainPage) .searchBox,
-  #sui-app-page:has(.mainPage) .main-content .MuiTab-root,
-  #sui-app-page:has(.mainPage) .css-1fi09qg,
-  #sui-app-page:has(.mainPage) .css-td0tw1,
-  #sui-app-page:has(.mainPage) .css-td0tw1 img,
-  #sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2 {
+  .sui-app-page .searchBox,
+  .sui-app-page .main-content .MuiTab-root,
+  .sui-app-page .css-1fi09qg,
+  .sui-app-page .css-td0tw1,
+  .sui-app-page .css-td0tw1 img,
+  .sui-app-page .left.css-vc7il7 .css-o7dev2 {
     transition: none !important;
   }
 }
 
-/* ---------- 9. 深色模式（仅首页） ---------- */
+/* ---------- 9. 深色模式（首页 + 子页面） ---------- */
 /* 令牌切换见 css/tokens.css；本文件只做站点硬编码色值的逐项映射。
    theme.js 在 document_start 同步写入 html[data-ruc-theme]，系统深色时无白闪。
    以下类名均为实测【脆弱锚点】 */
-:root[data-ruc-theme="dark"]:has(#sui-app-page .mainPage) {
+:root[data-ruc-theme="dark"]:has(.sui-app-page) {
   color-scheme: dark;
 }
 
-/* 9.1 页面底色：站点 body 为 rgb(252,247,240)，外层壳 .css-10y7bwx 为 #f5f5f5 */
-:root[data-ruc-theme="dark"]:has(#sui-app-page .mainPage) body,
-:root[data-ruc-theme="dark"]:has(#sui-app-page .mainPage) .css-10y7bwx {
-  background-color: var(--ruc-bg);
+/* 9.1 整页底色：站点 body 为 rgb(252,247,240)、外层壳 .css-10y7bwx 为 #f5f5f5。
+   首页与所有子页面统一为深色底（不是只改卡片） */
+:root[data-ruc-theme="dark"]:has(.sui-app-page) body,
+:root[data-ruc-theme="dark"]:has(.sui-app-page) .css-10y7bwx {
+  background-color: var(--ruc-bg) !important;
 }
 
 /* 9.1b 浮动的「问AI」容器 .css-9bac1i：内部已被 robot 开关隐藏，只剩一块白底，
    暗色下会变成横在视口上方的一条白带，直接透明 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .css-9bac1i {
+:root[data-ruc-theme="dark"] .sui-app-page .css-9bac1i {
   background-color: transparent;
 }
 
 /* 9.2 卡片与内层面板：原来都是纯白，深色下统一为卡片表面 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .mbox,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1g0lrd3,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1lbuwlc,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-f3m020,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .noPic.css-ch4h8o {
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .mbox,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-1g0lrd3,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-1lbuwlc,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-f3m020,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .noPic.css-ch4h8o {
   background-color: var(--ruc-surface);
 }
 
 /* 带页签卡片的渐变遮罩已在 7.1 统一移除，深色模式不再单独处理 */
 
-/* 9.3 浅色小面板：应用磁贴 #fdfcfc、图标底 #f5f8fc、日历事件行 #fffcf7、
-   简报内块 #fffaf7、日历空态 rgba(255,255,255,.8) → 次级表面；订阅斑马纹沿用页面底色 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-19q61fs,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1enuvvu,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1zq612,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-9lnpfq {
+/* 9.3 浅色小面板：图标底 #f5f8fc、日历事件行 #fffcf7、
+   简报内块 #fffaf7、日历空态 rgba(255,255,255,.8) → 次级表面；订阅斑马纹沿用页面底色
+   （应用磁贴 #fdfcfc 已在 3.0 统一透明，深色下同样透明） */
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-1enuvvu,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-9lnpfq {
   background-color: var(--ruc-surface-muted);
 }
 
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1a9rooy {
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-1a9rooy {
   background-color: var(--ruc-surface);
 }
 
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .item.css-dwibz9 {
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .item.css-dwibz9 {
   background-color: var(--ruc-bg);
 }
 
 /* 日程列表里的单条课程 rgb(252,248,244) → 次级表面 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-189p56r {
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-189p56r {
   background-color: var(--ruc-surface-muted);
 }
 
 /* 9.4 文字：站点在叶节点上硬编码 rgba(0,0,0,.88) / rgb(36,36,36) */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-gzoi1t,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1uc7y1h,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1yztyfh,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-a3hpos,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1is3hip {
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-gzoi1t,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-1uc7y1h,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-1yztyfh,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-a3hpos,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-1is3hip {
   color: var(--ruc-text);
 }
 
-/* 品牌红文字（日期、区块大标题、查看入口）：原 #861a12 在暗底不可读 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-14ekxs8,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1d20nk4,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-tas7ym,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .css-i5q9k4 {
+/* 品牌红文字（日期、区块大标题、查看入口）：原 #861a12 在暗底不可读。
+   学期/周次 .css-1d20nk4 不再跟随品牌色，已在 10.3 统一为深灰无衬线 */
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-14ekxs8,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-tas7ym,
+:root[data-ruc-theme="dark"] .sui-app-page .header .css-i5q9k4 {
   color: var(--ruc-brand);
 }
 
 /* 「全部」等纯文字按钮：站点用主题色 #861a12，跟随品牌令牌提亮 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .MuiButton-root {
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .MuiButton-root {
   color: var(--ruc-brand);
 }
 
 /* 页签内按钮自带 rgb(62,61,60)，未选中统一回次级文字色 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .MuiTab-root:not(.Mui-selected) button,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .MuiTab-root:not(.Mui-selected) button * {
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .MuiTab-root:not(.Mui-selected) button,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .MuiTab-root:not(.Mui-selected) button * {
   color: var(--ruc-text-2) !important;
 }
 
 /* 金色「添加日程」保留原强调色，仅提亮 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-xgstw9,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-xgstw9 * {
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-xgstw9,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-xgstw9 * {
   color: #cda574;
 }
 
 /* 正文资讯链接原 rgb(50,71,160)，暗底上提亮 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content a {
+:root[data-ruc-theme="dark"] .sui-app-page .main-content a {
   color: #8fa9e8;
 }
 
-/* 9.5 日历：普通日期、上月末置灰、今天白字（红底） */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .dayName {
-  color: var(--ruc-text) !important;
-}
-
-/* 小页签（我的日历 / 课表 / 校历）选中态自带白色渐变底 rgba(255,255,255,.9) */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .css-1vswfjl .MuiTab-root {
+/* 9.5 日历日期底色与文字：站点硬编码色值统一在 10.2 用令牌覆盖，浅/深色共用一套规则 */
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-1vswfjl .MuiTab-root {
   background-image: none !important;
 }
 
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .beforeDay .dayName {
-  color: var(--ruc-text-3) !important;
-}
-
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .todayDay .dayName {
-  color: #ffffff !important;
-}
-
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .days {
-  color: var(--ruc-text-2) !important;
-}
-
-/* 日期方块：站点用无类名的 <i> 当底色（浅灰 #e5e6e7 / 白 / 今天品牌红），暗底上需重映射。
-   只取 .MuiTypography-caption 的直接子 <i>（事件圆点嵌在 .event-mark 内，不受影响） */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .calendar_element .MuiTypography-caption > i {
-  background-color: var(--ruc-surface-muted) !important;
-}
-
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .main-content .calendar_element .todayDay > i {
-  background-color: var(--ruc-brand) !important;
-}
-
 /* 9.6 搜索胶囊：白底与 #dfe1e5 描边改为深色表面 / 分割线 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .css-1fi09qg {
+:root[data-ruc-theme="dark"] .sui-app-page .css-1fi09qg {
   background-color: var(--ruc-surface);
   box-shadow: inset 0 0 0 1px var(--ruc-divider);
 }
 
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .css-1fi09qg:hover {
+:root[data-ruc-theme="dark"] .sui-app-page .css-1fi09qg:hover {
   box-shadow: inset 0 0 0 1px var(--ruc-divider), 0 1px 6px rgba(0, 0, 0, 0.4);
 }
 
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .css-1fi09qg:focus-within {
+:root[data-ruc-theme="dark"] .sui-app-page .css-1fi09qg:focus-within {
   box-shadow: inset 0 0 0 1px var(--ruc-divider), 0 1px 6px rgba(0, 0, 0, 0.5);
 }
 
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .css-td0tw1:hover {
+:root[data-ruc-theme="dark"] .sui-app-page .css-td0tw1:hover {
   background-color: rgba(255, 255, 255, 0.08);
 }
 
 /* AI 图标原本靠 brightness(0) 转黑，深色下反相为白 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .css-td0tw1 img {
+:root[data-ruc-theme="dark"] .sui-app-page .css-td0tw1 img {
   filter: brightness(0) invert(1) opacity(0.6);
 }
 
-/* 9.7 Chrome 页签：选中白底与 #dcdfe4 描边 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .MuiTab-root.css-1sun605.Mui-selected {
-  background-color: var(--ruc-surface) !important;
-  border-color: var(--ruc-divider);
+/* 9.7 功能页签：深色下选中胶囊用品牌色的半透明底 */
+:root[data-ruc-theme="dark"] .sui-app-page .MuiTab-root.css-1sun605.Mui-selected {
+  background-color: var(--ruc-brand-weak) !important;
+  border-color: transparent;
 }
 
-/* 9.8 左侧导航：hover 的黑色 4% 改白色 6%；底部白图标反相；分隔线跟随令牌 */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .left.css-vc7il7 .css-o7dev2:hover {
-  background-color: var(--ruc-hairline);
+/* 9.8 左侧导航：深色下 hover / 底部图标 / 分隔线跟随侧栏令牌
+   （配色方案已在 tokens.css 里给出各自取值，这里只做深色所需的图标反相） */
+:root[data-ruc-theme="dark"] .sui-app-page .left.css-vc7il7 .css-o7dev2:hover {
+  background-color: var(--ruc-sidebar-item-hover);
 }
 
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .left.css-vc7il7 .css-1ra27ml img {
+:root[data-ruc-theme="dark"] .sui-app-page .left.css-vc7il7 .css-1ra27ml img {
   filter: brightness(0) invert(1);
   opacity: 0.42;
 }
 
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .left.css-vc7il7 .css-adllax,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .left.css-vc7il7 .css-xz1zqc {
-  background-color: var(--ruc-divider);
+:root[data-ruc-theme="dark"] .sui-app-page .left.css-vc7il7 .css-adllax,
+:root[data-ruc-theme="dark"] .sui-app-page .left.css-vc7il7 .css-xz1zqc {
+  background-color: var(--ruc-sidebar-line);
 }
 
 /* 9.9 顶栏右侧 4 个入口：图标是「品牌红 + 白色细节」的双色 SVG，
    整块 brightness(0) 再反相会把两种颜色压成一个灰色剪影（内部线条全部丢失），
    改为只提亮红色并保留白色细节；进入区外圈的白色径向光晕（::before 白色
    radial-gradient）在暗底会变成亮块，需移除；下方入口文字为硬编码 rgba(0,0,0,.88) */
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .ant-col:has(.css-yw8xxi) svg {
+:root[data-ruc-theme="dark"] .sui-app-page .header .ant-col:has(.css-yw8xxi) svg {
   filter: brightness(1.55) saturate(0.9);
   opacity: 0.95;
 }
 
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .ant-col:has(.css-yw8xxi) .css-1px51jt::before,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .ant-col:has(.css-yw8xxi) .css-1xzcrao::before,
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .ant-col:has(.css-yw8xxi) .css-1auas76::before {
+:root[data-ruc-theme="dark"] .sui-app-page .header .ant-col:has(.css-yw8xxi) .css-1px51jt::before,
+:root[data-ruc-theme="dark"] .sui-app-page .header .ant-col:has(.css-yw8xxi) .css-1xzcrao::before,
+:root[data-ruc-theme="dark"] .sui-app-page .header .ant-col:has(.css-yw8xxi) .css-1auas76::before {
   background-image: none !important;
 }
 
-:root[data-ruc-theme="dark"] #sui-app-page:has(.mainPage) .header .ant-col:has(.css-yw8xxi) .css-1vn5xi9 {
+:root[data-ruc-theme="dark"] .sui-app-page .header .ant-col:has(.css-yw8xxi) .css-1vn5xi9 {
   color: var(--ruc-text);
 }
+
+/* ---------- 10. 整页底色（浅灰） ---------- */
+/* 站点浅色底色是米白 rgb(252,247,240)，整页改为浅灰；深色见 9.1。
+   只作用于 body 与最外层壳，卡片仍是白面，层次靠底色差拉开 */
+:root[data-ruc-theme="light"] body,
+:root[data-ruc-theme="light"] .css-10y7bwx {
+  background-color: var(--ruc-bg) !important;
+}
+
+/* 站点真正的整页绘制层是 .bg.css-xdr7km（1422×1929，米白 rgb(252,247,240)
+   + 装饰图 bg_img.png）。只改 body 会被这层完全盖住，深浅色都要清掉它 */
+.sui-app-page .bg.css-xdr7km {
+  background-color: var(--ruc-bg) !important;
+  background-image: none !important;
+}
+
+/* ---------- 10.2 日程中心日历：去底板，用文字颜色区分当天 ---------- */
+/* 每天数字后的 <i> 是站点画的大圆角底板（浅灰 / 白 / 今天深红），全部透明。
+   事件橙点嵌在 .event-mark 内，不受影响 */
+.sui-app-page .main-content .calendar_element .MuiTypography-caption > i {
+  background-color: transparent !important;
+}
+
+/* 非当天：正文色；周几标签降为次级色；过去日期再淡一档 */
+.sui-app-page .main-content .calendar_element .dayName {
+  color: var(--ruc-text) !important;
+  font-family: var(--ruc-font) !important;
+}
+
+.sui-app-page .main-content .calendar_element .dayName.nl {
+  color: var(--ruc-text-2) !important;
+}
+
+.sui-app-page .main-content .calendar_element .beforeDay .dayName {
+  color: var(--ruc-text-3) !important;
+}
+
+/* 当天：品牌色加粗（深浅色各自跟随令牌），不再用色块 */
+.sui-app-page .main-content .calendar_element .current .dayName,
+.sui-app-page .main-content .calendar_element .todayDay .dayName {
+  color: var(--ruc-brand) !important;
+  font-weight: 700;
+}
+
+.sui-app-page .main-content .calendar_element .current .dayName.nl,
+.sui-app-page .main-content .calendar_element .todayDay .dayName.nl {
+  color: var(--ruc-brand) !important;
+}
+
+/* 事件橙点：站点固定 13×13，暗底上显得过大，缩小到 8px */
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .calendar_element .event-mark > i {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+/* ---------- 10.3 学期 / 周次：深灰无衬线，只留周数 ---------- */
+/* 文案「2026-2027学年秋季学期 第9周」由 icons.js 的 slimWeek 裁成「第9周」 */
+.sui-app-page .css-1d20nk4 {
+  color: var(--ruc-text-2) !important;
+  font-family: var(--ruc-font) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.2px;
+}
+
+/* ---------- 10.4 日历小页签：选中态灰色系 ---------- */
+.sui-app-page .main-content .css-1vswfjl .MuiTab-root {
+  min-height: 0 !important;
+  height: 26px;
+  padding: 0 10px !important;
+  margin: 0 !important;
+  border-radius: var(--ruc-radius-sm);
+  background-image: none !important;
+  background-color: transparent !important;
+  color: var(--ruc-text-2) !important;
+  font-weight: 500 !important;
+  transition: background-color var(--ruc-motion-fast), color var(--ruc-motion-fast);
+}
+
+.sui-app-page .main-content .css-1vswfjl .MuiTab-root:hover {
+  background-color: var(--ruc-hairline) !important;
+}
+
+.sui-app-page .main-content .css-1vswfjl .MuiTab-root.Mui-selected {
+  background-color: var(--ruc-surface-muted) !important;
+  color: var(--ruc-brand) !important;
+  font-weight: 600 !important;
+}
+
+.sui-app-page .main-content .css-1vswfjl .MuiTabs-indicator {
+  display: none !important;
+}
+
+/* ---------- 10.5 日程中心：去掉米黄底，仅保留中性灰 ---------- */
+/* 「全部 / 我的日历 / 课表 / 校历」外层 .css-1zq612 自带 rgb(255,252,247) 米黄底。
+   改成透明，只留下选中项的灰色胶囊（见 10.4） */
+.sui-app-page .main-content .css-1zq612 {
+  background-color: transparent !important;
+}
+
+/* 日程事件行 .css-189p56r 原为 rgb(252,248,244) 米黄底，改用与选中态一致的灰色 */
+.sui-app-page .main-content .css-189p56r {
+  background-color: var(--ruc-surface-muted) !important;
+}
+
+/* ---------- 11. 子页面（#/management 等 .listPage） ---------- */
+/* 搜索胶囊、页签、卡片、迷你栏与抽屉。页签与入口网格沿用与首页一致的
+   Fluent 视觉；深色模式整体映射到中性表面 + 提亮品牌色 */
+
+/* 11.0 子页面装饰水印 .ren（250×250、position:absolute、z-index:999）是
+   一块透明层，会拦截下方操作。它的横坐标随视口宽度移动，全屏时正好压住
+   管理平台「财务 / 校务 / 其他 / 全部」等页签，表现为按钮点不动。
+   只关闭命中测试，视觉不变
+   【脆弱锚点：.ren.css-15buvdl】 */
+.sui-app-page .ren.css-15buvdl,
+.sui-app-page .css-15buvdl {
+  pointer-events: none !important;
+}
+
+/* 11.1 分类页签：32px 圆角胶囊，选中浅灰底 + 品牌字，去掉 MUI 下划线 */
+.sui-app-page .listPage .MuiTabs-root.css-gnlbmf {
+  min-height: 0 !important;
+  height: 32px;
+}
+
+.sui-app-page .listPage .MuiTabs-root.css-gnlbmf .MuiTabs-indicator {
+  display: none !important;
+}
+
+.sui-app-page .listPage .MuiTab-root.css-8cneed {
+  min-height: 0 !important;
+  height: 32px;
+  min-width: 0;
+  padding: 0 14px !important;
+  margin: 0 4px 0 0 !important;
+  border-radius: var(--ruc-radius-sm);
+  background: transparent !important;
+  color: var(--ruc-text-2) !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  transition: background-color var(--ruc-motion-fast), color var(--ruc-motion-fast);
+}
+
+.sui-app-page .listPage .MuiTab-root.css-8cneed * {
+  font-size: inherit !important;
+  color: inherit !important;
+}
+
+.sui-app-page .listPage .MuiTab-root.css-8cneed:hover {
+  background-color: var(--ruc-hairline) !important;
+}
+
+.sui-app-page .listPage .MuiTab-root.css-8cneed.Mui-selected {
+  background-color: var(--ruc-surface-muted) !important;
+  color: var(--ruc-brand) !important;
+  font-weight: 600 !important;
+}
+
+/* 11.2 列表卡片与「返回首页」：圆角保持，深色换表面色 */
+.sui-app-page .listPage .list-content.css-hsvxik {
+  border-radius: var(--ruc-radius-lg);
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .list-content.css-hsvxik {
+  background-color: var(--ruc-surface);
+}
+
+.sui-app-page .listPage .css-1fz42ff {
+  border-radius: var(--ruc-radius-sm);
+  color: var(--ruc-text-2);
+  transition: background-color var(--ruc-motion-fast), color var(--ruc-motion-fast);
+}
+
+.sui-app-page .listPage .css-1fz42ff:hover {
+  background-color: var(--ruc-hairline);
+  color: var(--ruc-text);
+}
+
+/* 11.3 子页面侧栏：迷你栏 / 抽屉在原设计里是整块人大红。
+   深色模式下大块红面过亮，改为中性表面 + 分割线，内部白字仍可读 */
+:root[data-ruc-theme="dark"] .sui-app-page .left-min.listss,
+:root[data-ruc-theme="dark"] .sui-app-page .left.css-butkle,
+:root[data-ruc-theme="dark"] .sui-app-page .left.css-butkle .page-menu {
+  background-color: var(--ruc-surface);
+  box-shadow: inset -1px 0 0 var(--ruc-divider);
+}
+
+/* 抽屉里的用户胶囊原为红底白字，深色下换成品牌色以保持可见性 */
+:root[data-ruc-theme="dark"] .sui-app-page .left.css-butkle .MuiButton-containedPrimary {
+  background-color: var(--ruc-brand);
+}
+
+/* 11.4 子页面正文：站点在多数叶节点硬编码 rgba(0,0,0,.88)，
+   深色下统一到正文令牌（标题/链接等已单独映射的优先级更高） */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage,
+:root[data-ruc-theme="dark"] .sui-app-page .list-content {
+  color: var(--ruc-text);
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-i5q9k4 {
+  color: var(--ruc-brand);
+}
+
+/* 11.5 应用磁贴：站点固定浅白底 rgb(253,252,252) + 继承来的浅色文字，
+   深色下变成白底浅字。底板换次级表面，图标底与文字一并适配
+   【脆弱锚点：.buttonBases.css-fg1lo4，实测 212×75】 */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .buttonBases.css-fg1lo4,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-fg1lo4 {
+  background-color: var(--ruc-surface-muted);
+  box-shadow: inset 0 0 0 1px var(--ruc-divider);
+}
+
+/* 磁贴内层图标底板 .css-okj8in 原为白色圆角块 */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-fg1lo4 .css-okj8in {
+  background-color: var(--ruc-surface);
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-fg1lo4 .css-jr1nj2 {
+  color: var(--ruc-text);
+}
+
+/* 11.6 列表页内联搜索：外层品牌红薄壳 + 内层白底红框；深色改中性表面与分割线 */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-i92si2 {
+  background-color: transparent;
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1pejwo5 {
+  background-color: var(--ruc-surface);
+  border-color: var(--ruc-divider);
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1pejwo5 input,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1pejwo5 textarea {
+  color: var(--ruc-text);
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1pejwo5 input::placeholder {
+  color: var(--ruc-text-3);
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1pejwo5 .MuiButton-root {
+  color: var(--ruc-brand);
+}
+
+/* 11.7 办事大厅（服务目录）：左右两块白面板 + 米白标签/选中行/表头 */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-76zgwx,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-f5p87a {
+  background-color: var(--ruc-surface);
+}
+
+/* 部门列表的 30×30 米黄图标底板 rgb(230,198,158) 在深色下过亮 */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1q1eqn8 {
+  background-color: var(--ruc-surface-muted) !important;
+}
+
+/* 部门搜索右侧「查询」按钮原为暗红 rgb(134,26,18) */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-17qt1bs .MuiButton-root {
+  color: var(--ruc-brand) !important;
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1asg15h,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-e3plpr,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1czj5eq,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-9lunkq {
+  background-color: var(--ruc-surface-muted) !important;
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-17qt1bs {
+  background-color: var(--ruc-surface-muted);
+  box-shadow: inset 0 0 0 1px var(--ruc-divider);
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-17qt1bs input {
+  color: var(--ruc-text);
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-17qt1bs input::placeholder {
+  color: var(--ruc-text-3);
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1403n9a {
+  background-color: var(--ruc-surface);
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-9lunkq {
+  color: var(--ruc-text-2);
+}
+
+/* 办事大厅正文：标题 rgb(51,51,51)、表格行 rgb(35,35,35)、分页文字 rgba(0,0,0,.87) */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1vw86tg,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-hkf2h1,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-afifjw,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-x9wyaq {
+  color: var(--ruc-text);
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .MuiTablePagination-root,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .MuiTablePagination-root * {
+  color: var(--ruc-text-2) !important;
+}
+
+/* 排序 / 按部门的选中指示器：站点用暗红半透明，深色下换成品牌弱色 */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-3k56tw {
+  background-color: var(--ruc-brand-weak) !important;
+}
+
+/* 11.8 资讯中心：AI简报卡 / 简报正文块 / 公众号卡原本都是白底 */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-ft8cik,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-udw1wk {
+  background-color: var(--ruc-surface);
+}
+
+/* 简报左侧订阅卡用 linear-gradient 米黄背景图，背景色覆盖不了，需一并清掉 */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-16x6j3c {
+  background-color: var(--ruc-surface-muted) !important;
+  background-image: none !important;
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-kr0om9 {
+  background-color: var(--ruc-surface-muted);
+}
+
+/* 模块标题「AI简报」「校园公众号最新发布」为 rgb(36,36,36) 深灰 */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1ndi6d,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-dxctgo {
+  color: var(--ruc-text) !important;
+  font-family: var(--ruc-font) !important;
+}
+
+/* 正文链接原 rgb(50,71,160)，暗底提亮 */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage a {
+  color: #8fa9e8;
+}
+
+/* 日期与编号的品牌红小字 */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1vg6q84,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1cbga3d,
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-1xdhyk6 {
+  color: var(--ruc-brand);
+}
+
+/* 资讯中心底部数据条的内联浅色 SVG 装饰（div.svg.css-yw8xxi）在深色下过亮，
+   只保留很低的视觉权重 */
+:root[data-ruc-theme="dark"] .sui-app-page .listPage .css-yw8xxi {
+  opacity: 0.22;
+}
+
+/* ---------- 12. 资讯订阅：移除 AI 简报，我的订阅占满整行 ---------- */
+/* 站点这一行是 Ant Design 的 10/14 两栏栅格：左 AI 简报、右我的订阅。
+   AI 简报整列隐藏后，把订阅列从 14/24 提到 100%，用 CSS 完成，避免改 React 树。 */
+.sui-app-page .main-content .ant-row:has(.css-1g4yje1) > .ant-col:has(.css-1g4yje1) {
+  display: none !important;
+}
+
+.sui-app-page .main-content .ant-row:has(.css-1g4yje1) > .ant-col:has(.css-1g8w000) {
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
+}
+
+/* 12.1 资讯订阅页签：未选中项原本是低对比的米黄色 rgb(185,169,150)，
+   改为次级文字灰，保证在浅色与深色下都清晰可读
+   【脆弱锚点：.css-pig8mb】 */
+.sui-app-page .main-content .css-pig8mb:not(.Mui-selected) button,
+.sui-app-page .main-content .css-pig8mb:not(.Mui-selected) button div,
+.sui-app-page .main-content .css-pig8mb:not(.Mui-selected) > span {
+  color: var(--ruc-text-2) !important;
+}
+
+/* ---------- 13. 页脚：配色令牌驱动，避开固定侧栏 ---------- */
+/* 站点页脚是两层全出血红条：.css-buv9m3（#5d120c 底）+ .css-dlxrhm（#861a12 + 背景图），
+   文字为白色。改为配色令牌（简洁/原始＝中性灰，色调＝米色），文字转次级色。 */
+.sui-app-page .footer .css-buv9m3,
+.sui-app-page .footer .css-dlxrhm {
+  background-color: var(--ruc-footer-bg) !important;
+  background-image: none !important;
+}
+
+.sui-app-page .footer .css-14g54ir,
+.sui-app-page .footer .css-14g54ir * {
+  color: var(--ruc-footer-text) !important;
+}
+
+@media (min-width: 1024px) {
+  /* 固定侧栏宽 260，而页脚 .inner 居中于 x=120，左侧版权文字会被侧栏盖住。
+     首页与子页面都把文字行右移到侧栏之外（x≈205），右侧“回到顶部”仍贴右对齐。 */
+  .sui-app-page .footer .css-14g54ir {
+    padding-left: 205px !important;
+    box-sizing: border-box;
+  }
+}
+
 

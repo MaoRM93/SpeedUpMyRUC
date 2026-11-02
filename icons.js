@@ -1,17 +1,21 @@
-// 应用入口图标：按 appstore 图标 UUID 替换为本地线性图标（分类浅色底 + 同色系线条）
+// 模块标题图标重绘（透明底实心，颜色跟随 --ruc-brand）；应用磁贴沿用站点原图标库
 // 纯数据 URI，不依赖 chrome.* API，可在扩展与实验页面直接注入验证
 (() => {
   if (globalThis.__rucAppIcons) return;
   globalThis.__rucAppIcons = true;
 
+  // 远程禁用守卫（guard.js）先行；被禁用时不再改写任何图标与校徽
+  function boot() {
+
+  // 分类线条色：浅色为深色线，深色改用亮色线；磁贴图标统一为透明底
   const CATS = {
-    acad: { bg: "#FBEDEA", fg: "#9A2B20" }, // 教务
-    stu: { bg: "#E9F3EF", fg: "#2F6B5C" }, // 学务
-    serv: { bg: "#EAF1F8", fg: "#2C5B86" }, // 服务
-    fin: { bg: "#FAF1E0", fg: "#8A6231" }, // 财务
-    admin: { bg: "#F1EDF7", fg: "#5B4A87" }, // 校务
-    college: { bg: "#EDF0F6", fg: "#4A5570" }, // 院务
-    misc: { bg: "#F1F1EE", fg: "#565B61" } // 其他
+    acad: { fg: "#9A2B20", dfg: "#EAA79E" }, // 教务
+    stu: { fg: "#2F6B5C", dfg: "#8FC7B4" }, // 学务
+    serv: { fg: "#2C5B86", dfg: "#8FB6DC" }, // 服务
+    fin: { fg: "#8A6231", dfg: "#D9B482" }, // 财务
+    admin: { fg: "#5B4A87", dfg: "#B9A7E8" }, // 校务
+    college: { fg: "#4A5570", dfg: "#A4B0C7" }, // 院务
+    misc: { fg: "#565B61", dfg: "#B5B8BD" } // 其他
   };
 
   // 24x24 坐标系的线性符号
@@ -85,6 +89,19 @@
     disc: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M18 9.5a8.5 8.5 0 0 1 0 5"/>',
     bank: '<path d="M3 9 12 4l9 5"/><path d="M5 9v9M9.5 9v9M14.5 9v9M19 9v9M3 18h18M2 21h20"/>',
     wheat: '<path d="M12 21V9"/><path d="M12 12c-2.6 0-4.2-1.6-4.2-4.2 2.6 0 4.2 1.6 4.2 4.2zM12 12c2.6 0 4.2-1.6 4.2-4.2-2.6 0-4.2 1.6-4.2 4.2zM12 17c-2.6 0-4.2-1.6-4.2-4.2 2.6 0 4.2 1.6 4.2 4.2zM12 17c2.6 0 4.2-1.6 4.2-4.2-2.6 0-4.2 1.6-4.2 4.2z"/>'
+  };
+
+  // 模块标题图标：与线性图标不同，这里要「实心图形 + 透明底」，
+  // 颜色由 --ruc-brand 决定（浅色人大红 / 深色提亮红），与标题文字保持一致
+  const SOLID = {
+    bell:
+      '<path d="M12 2.2a1 1 0 0 1 1 1v1a6.4 6.4 0 0 1 5.2 6.2v3.4l1.5 2.5a.95.95 0 0 1-.82 1.43H4.12a.95.95 0 0 1-.82-1.43L4.8 13.8v-3.4A6.4 6.4 0 0 1 10 4.2v-1a1 1 0 0 1 1-1z"/><path d="M9.4 19h5.2a2.6 2.6 0 0 1-5.2 0z"/>',
+    calendar:
+      '<path fill-rule="evenodd" d="M5.6 3.6h12.8a2.8 2.8 0 0 1 2.8 2.8v11.8a2.8 2.8 0 0 1-2.8 2.8H5.6a2.8 2.8 0 0 1-2.8-2.8V6.4a2.8 2.8 0 0 1 2.8-2.8zM4.2 9.8h15.6v8.8H4.2z"/><rect x="6.6" y="2" width="2" height="3.4" rx="1"/><rect x="15.4" y="2" width="2" height="3.4" rx="1"/><rect x="6.4" y="12.6" width="2.6" height="2.6" rx=".7"/><rect x="10.9" y="12.6" width="2.6" height="2.6" rx=".7"/><rect x="15.4" y="12.6" width="2.6" height="2.6" rx=".7"/>',
+    bulb:
+      '<path d="M12 2.6a6.6 6.6 0 0 1 4.1 11.8v1.1a1.4 1.4 0 0 1-1.4 1.4H9.3a1.4 1.4 0 0 1-1.4-1.4v-1.1A6.6 6.6 0 0 1 12 2.6z"/><rect x="9.5" y="17.6" width="5" height="1.7" rx=".85"/><rect x="10.3" y="20.2" width="3.4" height="1.3" rx=".65"/>',
+    bookmark:
+      '<path d="M7.2 2.8h9.6a1.6 1.6 0 0 1 1.6 1.6v16.8l-6.4-4.2-6.4 4.2V4.4a1.6 1.6 0 0 1 1.6-1.6z"/>'
   };
 
   // UUID -> [分类, 符号]
@@ -196,29 +213,44 @@
     "89516a7b-4f80-4c2d-989d-ee4cf9d349af": ["misc", "wifi"]
   };
 
-  // 首页模块标题图标：站点原图（icon_t*.png）是 3D 写实小图，与本站线性图标
-  // 语言不一致，按文件名映射重绘。icon_t7.png 同时用于「AI简报」与「我的订阅」，
-  // 按相邻标题文本区分（【脆弱锚点：.css-1ndi6d 标题文本】）
+  // 首页模块标题图标：站点原图（icon_t*.png）是 3D 写实小图，与本站图标
+  // 语言不一致，按文件名映射重绘为实心透明底图标。icon_t7.png 同时用于
+  // 「AI简报」与「我的订阅」，按相邻标题文本区分（【脆弱锚点：.css-1ndi6d】）
   const MODULES = {
-    "icon_t1.png": ["acad", "megaphone"], // 通知公告
-    "icon_t2.png": ["serv", "calgrid"], // 日程中心
-    "icon_t7.png": ["admin", "bulb"] // AI简报（默认）
+    "icon_t1.png": "bell", // 通知公告
+    "icon_t2.png": "calendar", // 日程中心
+    "icon_t7.png": "bulb" // AI简报（默认）
   };
   const MODULE_T7 = {
-    "我的订阅": ["fin", "bookstar"]
+    "我的订阅": "bookmark"
   };
 
   const cache = new Map();
-  function uri(catKey, glyphKey) {
-    const key = catKey + ":" + glyphKey;
+  const themeDark = () => document.documentElement.dataset.rucTheme === "dark";
+
+  // --ruc-brand 由扩展 CSS 令牌提供；万一 CSS 尚未生效则回退到同一色值
+  function brandColor() {
+    let v = "";
+    try {
+      v = getComputedStyle(document.documentElement).getPropertyValue("--ruc-brand").trim();
+    } catch (e) {
+      v = "";
+    }
+    return v || (themeDark() ? "#ff6b5e" : "#861a12");
+  }
+
+  // 应用磁贴沿用站点原始图标库，不再重绘；仅模块标题图标继续自绘
+
+  // 实心模块图标：透明底 + 品牌色，字号与标题同步
+  function solidUri(glyphKey) {
+    const color = brandColor();
+    const key = "solid:" + glyphKey + ":" + color;
     if (cache.has(key)) return cache.get(key);
-    const cat = CATS[catKey] || CATS.misc;
-    const glyph = G[glyphKey];
+    const glyph = SOLID[glyphKey];
     if (!glyph) return null;
     const svg =
       '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">' +
-      '<rect width="40" height="40" rx="10" fill="' + cat.bg + '"/>' +
-      '<g transform="translate(8 8)" fill="none" stroke="' + cat.fg + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<g transform="translate(8 8)" fill="' + color + '" stroke="none">' +
       glyph +
       "</g></svg>";
     const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
@@ -226,55 +258,52 @@
     return url;
   }
 
-  function idOf(src) {
-    const m = /appstore\/([0-9a-fA-F-]{20,})\//.exec(src || "");
-    return m ? m[1] : null;
-  }
-
-  function swap(img) {
-    if (!img || img.nodeName !== "IMG") return;
+  function moduleKey(img) {
+    if (img.dataset.rucModule) return img.dataset.rucModule;
     const src = img.getAttribute("src") || "";
-    if (src.indexOf("data:image/svg") === 0) return;
-    const id = img.dataset.rucIcon || idOf(src);
-    const hit = id && APPS[id];
-    if (!hit) return;
-    const url = uri(hit[0], hit[1]);
-    if (!url) return;
-    img.dataset.rucIcon = id;
-    if (img.hasAttribute("srcset")) img.removeAttribute("srcset");
-    img.src = url;
-  }
-
-  function swapModule(img) {
-    if (!img || img.nodeName !== "IMG") return;
-    const src = img.getAttribute("src") || "";
-    if (src.indexOf("data:image/svg") === 0) return;
+    if (src.indexOf("data:image/svg") === 0) return null;
     const file = /\/(icon_t\d+\.png)/.exec(src);
-    if (!file) return;
-    let hit = MODULES[file[1]];
+    if (!file) return null;
+    let key = MODULES[file[1]];
     if (file[1] === "icon_t7.png") {
       const head = img.closest(".css-70qvj9");
       const title = head && head.querySelector(".css-1ndi6d");
       const name = title ? title.textContent.trim() : "";
-      hit = MODULE_T7[name] || hit;
+      key = MODULE_T7[name] || key;
     }
-    if (!hit) return;
-    const url = uri(hit[0], hit[1]);
+    return key;
+  }
+
+  function swapModule(img) {
+    if (!img || img.nodeName !== "IMG") return;
+    const key = moduleKey(img);
+    if (!key) return;
+    const url = solidUri(key);
     if (!url) return;
-    img.src = url;
-    img.style.setProperty("width", "30px", "important");
-    img.style.setProperty("height", "30px", "important");
-    img.style.setProperty("object-fit", "cover", "important");
+    img.dataset.rucModule = key;
+    if (img.hasAttribute("srcset")) img.removeAttribute("srcset");
+    if (img.getAttribute("src") !== url) img.src = url;
+    img.style.setProperty("width", "34px", "important");
+    img.style.setProperty("height", "34px", "important");
+    img.style.setProperty("object-fit", "contain", "important");
+  }
+
+  // 主题切换：重绘随主题变化的自绘模块标题图标
+  function refreshIcons() {
+    document.querySelectorAll("img[data-ruc-module]").forEach((img) => swapModule(img));
   }
 
   // 浅色模式校徽换成红色矢量版；深色保留站点原金色版。
+  // 「原始」配色是红侧栏，必须保留原金色校徽，否则红底红标不可见。
   // 扩展注入的 CSS 里 url() 会按页面域名解析（../assets 会 404），
   // 因此这里用 chrome.runtime.getURL 给出扩展绝对地址。
   const LOGO_FILE = "assets/logo-ruc-red.png";
   function swapLogo() {
     if (typeof chrome === "undefined" || !chrome.runtime || !chrome.runtime.getURL) return;
     const url = chrome.runtime.getURL(LOGO_FILE);
-    const light = document.documentElement.dataset.rucTheme === "light";
+    const root = document.documentElement;
+    const light =
+      root.dataset.rucTheme === "light" && root.dataset.rucPalette !== "original";
     document.querySelectorAll('.left.css-vc7il7 img[src*="logo-ruc.png"], .left.css-vc7il7 img[data-ruc-logo]').forEach((img) => {
       if (!img.dataset.rucLogoSrc) img.dataset.rucLogoSrc = img.getAttribute("src");
       const want = light ? url : img.dataset.rucLogoSrc;
@@ -283,17 +312,26 @@
     });
   }
 
+  // 日程中心「学期 + 第N周」：只保留周数，学期隐藏（由 CSS 统一成深灰无衬线）
+  function slimWeek() {
+    const el = document.querySelector(".sui-app-page .css-1d20nk4");
+    if (!el || el.dataset.rucWeek === "1") return;
+    const m = /第\s*(\d+)\s*周/.exec(el.textContent || "");
+    if (!m) return;
+    el.textContent = "第" + m[1] + "周";
+    el.dataset.rucWeek = "1";
+  }
+
   function scan(root) {
     const scope = root && root.querySelectorAll ? root : document;
-    scope.querySelectorAll('img[src*="appstore"], img[src*="icon_t"]').forEach((img) => {
-      swap(img);
+    scope.querySelectorAll('img[src*="icon_t"]').forEach((img) => {
       swapModule(img);
     });
     if (scope !== document && scope.tagName === "IMG") {
-      swap(scope);
       swapModule(scope);
     }
     swapLogo();
+    slimWeek();
   }
 
   scan();
@@ -302,28 +340,34 @@
     new MutationObserver((records) => {
       for (const r of records) {
         if (r.type === "attributes") {
-          if (r.attributeName === "data-ruc-theme") swapLogo();
-          else {
-            swap(r.target);
+          if (r.attributeName === "data-ruc-theme" || r.attributeName === "data-ruc-palette") {
+            swapLogo();
+            refreshIcons();
+          } else {
             swapModule(r.target);
           }
         } else {
           for (const n of r.addedNodes) {
             if (n.nodeType !== 1) continue;
             if (n.tagName === "IMG") {
-              swap(n);
               swapModule(n);
             } else scan(n);
           }
+          slimWeek();
         }
       }
     }).observe(document.documentElement, {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ["src", "data-ruc-theme"]
+      attributeFilter: ["src", "data-ruc-theme", "data-ruc-palette"]
     });
   };
   if (document.body) start();
   else document.addEventListener("DOMContentLoaded", start, { once: true });
+  }
+
+  const gate = globalThis.__rucGate;
+  if (gate) gate.then((ok) => { if (ok) boot(); });
+  else boot();
 })();

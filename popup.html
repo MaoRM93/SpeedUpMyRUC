@@ -52,6 +52,10 @@
     color: #1d1d1f;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
   }
+  .seg button:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
   .g, .i {
     display: flex;
     align-items: center;
@@ -77,22 +81,84 @@
     font-size: 11px;
     color: #86868b;
   }
+  .upd {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 7px;
+  }
+  .upd button {
+    flex: none;
+    padding: 3px 10px;
+    border: 1px solid #d6d6d9;
+    border-radius: 6px;
+    background: #fff;
+    font: inherit;
+    font-size: 11px;
+    color: #1d1d1f;
+    cursor: pointer;
+  }
+  .upd button:hover { background: #f2f2f4; }
+  .upd button:disabled { opacity: 0.5; cursor: default; }
+  .upd .m { flex: 1; min-width: 0; font-size: 11px; color: #86868b; }
+  .upd .m a { color: #861a12; text-decoration: none; }
+  .upd .m .skipv {
+    flex: none;
+    margin-left: 6px;
+    padding: 0 5px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #86868b;
+    font-size: 10px;
+    line-height: 16px;
+    text-decoration: underline;
+  }
+  .upd .m .skipv:hover { background: #f2f2f4; color: #1d1d1f; }
+  .kill {
+    margin: 0 14px 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #861a12;
+    color: #fff;
+    font-size: 12px;
+    line-height: 18px;
+  }
+  body.killed .theme,
+  body.killed main,
+  body.killed .upd,
+  body.killed .hint { display: none; }
   @media (prefers-color-scheme: dark) {
     body { color: #f5f5f7; background: #1e1e1e; }
     section, footer { border-color: #3a3a3c; }
     .i:hover { background: #2c2c2e; }
-    header .v, .g, .n, footer, .theme .tl { color: #98989d; }
+    header .v, .g, .n, footer, .theme .tl, .upd .m { color: #98989d; }
     .seg { background: #2c2c2e; }
     .seg button { color: #a1a1a6; }
     .seg button.on { background: #48484a; color: #f5f5f7; }
+    .upd button { background: #2c2c2e; border-color: #3a3a3c; color: #f5f5f7; }
+    .upd button:hover { background: #3a3a3c; }
+    .upd .m a { color: #ff8a80; }
+    .upd .m .skipv { color: #98989d; }
+    .upd .m .skipv:hover { background: #2c2c2e; color: #f5f5f7; }
+    .kill { background: #7a1a13; }
   }
 </style>
 </head>
 <body>
   <header>
     <span class="t">SpeedUpMyRUC</span>
-    <span class="v">101.0.0.100</span>
+    <span class="v">102.0.0.115</span>
   </header>
+  <div class="kill" id="killBox" hidden></div>
+  <div class="theme">
+    <span class="tl">配色</span>
+    <div class="seg" id="paletteSeg" role="radiogroup" aria-label="配色">
+      <button type="button" data-palette="clean">简洁</button>
+      <button type="button" data-palette="tone">色调</button>
+      <button type="button" data-palette="original">原始</button>
+    </div>
+  </div>
   <div class="theme">
     <span class="tl">主题</span>
     <div class="seg" id="themeSeg" role="radiogroup" aria-label="主题">
@@ -102,7 +168,13 @@
     </div>
   </div>
   <main id="list"></main>
-  <footer>勾选即时生效，无需刷新</footer>
+  <footer>
+    <div class="upd">
+      <button type="button" id="checkBtn">检查更新</button>
+      <span class="m" id="updMsg">未检查</span>
+    </div>
+    <div class="hint">勾选即时生效，无需刷新</div>
+  </footer>
   <script src="items.js"></script>
   <script src="popup.js"></script>
 </body>
