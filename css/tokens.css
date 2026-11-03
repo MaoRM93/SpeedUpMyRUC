@@ -58,9 +58,9 @@
 
 /* 深色令牌：整体转为中性冷灰；人大红在暗底接近黑色，改用高对比的暖珊瑚红 */
 :root[data-ruc-theme="dark"] {
-  --ruc-brand: #ff6b5e;
-  --ruc-brand-strong: #ff8a80;
-  --ruc-brand-weak: rgba(255, 107, 94, 0.16);
+  --ruc-brand: #ff8a80;
+  --ruc-brand-strong: #ffa39a;
+  --ruc-brand-weak: rgba(255, 138, 128, 0.16);
 
   --ruc-bg: #17181a;
   --ruc-surface: #1f2124;
@@ -106,8 +106,8 @@
   --ruc-sidebar-edge: transparent;
   --ruc-sidebar-text: #f0e2df;
   --ruc-sidebar-text-2: #bd9f99;
-  --ruc-sidebar-item-hover: rgba(255, 107, 94, 0.10);
-  --ruc-sidebar-selected-bg: rgba(255, 107, 94, 0.18);
+  --ruc-sidebar-item-hover: rgba(255, 138, 128, 0.10);
+  --ruc-sidebar-selected-bg: rgba(255, 138, 128, 0.18);
   --ruc-sidebar-selected-text: var(--ruc-brand);
   --ruc-footer-bg: #241d1b;
   --ruc-footer-text: #a6908a;

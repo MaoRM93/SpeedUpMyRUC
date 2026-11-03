@@ -573,8 +573,12 @@
   background-color: transparent;
 }
 
-/* 9.2 卡片与内层面板：原来都是纯白，深色下统一为卡片表面 */
-:root[data-ruc-theme="dark"] .sui-app-page .main-content .mbox,
+/* 9.2 卡片与内层面板：原来都是纯白，深色下统一为卡片表面。
+   收藏 / AI 服务 / 资讯订阅的 .mbox 只是页签外壳，浅色下本身透明，
+   白色只铺在下方内容面板上；深色下若给外壳刷表面色，#1f2124 会越过
+   页签，连标题行一起变成灰底。
+   【脆弱锚点：.css-6rc3s3、.css-1j21nac、.css-okn0d9】 */
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .mbox:not(.css-6rc3s3):not(.css-1j21nac):not(.css-okn0d9),
 :root[data-ruc-theme="dark"] .sui-app-page .main-content .css-1g0lrd3,
 :root[data-ruc-theme="dark"] .sui-app-page .main-content .css-1lbuwlc,
 :root[data-ruc-theme="dark"] .sui-app-page .main-content .css-f3m020,
@@ -594,10 +598,6 @@
 
 :root[data-ruc-theme="dark"] .sui-app-page .main-content .css-1a9rooy {
   background-color: var(--ruc-surface);
-}
-
-:root[data-ruc-theme="dark"] .sui-app-page .main-content .item.css-dwibz9 {
-  background-color: var(--ruc-bg);
 }
 
 /* 日程列表里的单条课程 rgb(252,248,244) → 次级表面 */
@@ -711,6 +711,58 @@
 
 :root[data-ruc-theme="dark"] .sui-app-page .header .ant-col:has(.css-yw8xxi) .css-1vn5xi9 {
   color: var(--ruc-text);
+}
+
+/* 9.10 深色下仍为暗红的小面积元素：站点把品牌红写死在叶节点，
+   暗底上几乎不可见，统一提亮到 --ruc-brand
+   【脆弱锚点：.css-1vfl7t9、.css-1xdhyk6、.css-19j5bq9、.css-1luk8ve】 */
+
+/* 日程时间：.css-1xdhyk6 同时被首页 .main-content 等大量元素复用，
+   必须限定在事件行 .css-189p56r 内，不能写成全局 */
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-189p56r .css-1vfl7t9,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-189p56r .css-1xdhyk6 {
+  color: var(--ruc-brand);
+}
+
+/* 日程事件行左侧的红色竖线与上下两个 4×4 圆点 */
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-19j5bq9 {
+  border-color: rgba(255, 138, 128, 0.35);
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-19j5bq9::before,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-19j5bq9::after {
+  background-color: var(--ruc-brand);
+}
+
+/* 资讯订阅日期：红色写在 .css-1luk8ve 及其内层 span.css-0 上 */
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .noPic.css-ch4h8o .css-1luk8ve,
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .noPic.css-ch4h8o .css-1luk8ve * {
+  color: var(--ruc-brand) !important;
+}
+
+/* AI 简报正文里的 <em> 来源行（正文 102,102,102，em 却是 134,26,18） */
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .css-9lnpfq em {
+  color: var(--ruc-text-2);
+}
+
+/* 通知公告已读条目：站点用整行 opacity:0.5 压暗，
+   连日期和 icon_top 图标一起变成暗红。改为整行不透明，只压暗标题 */
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .isRead.css-rrm8z0 {
+  opacity: 1 !important;
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .isRead.css-rrm8z0 .css-gzoi1t {
+  color: var(--ruc-text-2) !important;
+}
+
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .isRead.css-rrm8z0 .css-1gqj3lg {
+  opacity: 1 !important;
+}
+
+/* icon_top.png 原图约 rgb(128,32,16)，用滤镜链精确映射到 --ruc-brand (#ff8a80) */
+:root[data-ruc-theme="dark"] .sui-app-page .main-content .mbox.css-dbfa3x img[src*="icon_top"] {
+  filter: brightness(0) saturate(100%) invert(63%) sepia(44.5%) saturate(704%)
+    hue-rotate(315.6deg) brightness(104.2%) contrast(100.2%);
 }
 
 /* ---------- 10. 整页底色（浅灰） ---------- */
@@ -956,6 +1008,17 @@
   color: var(--ruc-brand);
 }
 
+/* 11.6b 管理平台搜索：站点把搜索与页签排在同一行，页签宽度已超出卡面，
+   搜索被挤出右边缘。改为绝对定位到卡面上方空白区（与「返回首页」同一行右侧）
+   【脆弱锚点：.css-i92si2、.css-79elbk、.css-1vf1vbj，仅管理平台 .css-hsvxik】 */
+.sui-app-page .listPage .list-content.css-hsvxik .css-79elbk > .css-1vf1vbj > .css-i92si2 {
+  position: absolute;
+  top: -49px;
+  right: -10px;
+  width: 213px;
+  z-index: 1;
+}
+
 /* 11.7 办事大厅（服务目录）：左右两块白面板 + 米白标签/选中行/表头 */
 :root[data-ruc-theme="dark"] .sui-app-page .listPage .css-76zgwx,
 :root[data-ruc-theme="dark"] .sui-app-page .listPage .css-f5p87a {
@@ -1078,6 +1141,19 @@
 .sui-app-page .main-content .css-pig8mb:not(.Mui-selected) button div,
 .sui-app-page .main-content .css-pig8mb:not(.Mui-selected) > span {
   color: var(--ruc-text-2) !important;
+}
+
+/* 12.2 资讯订阅列表扁平化（浅色 / 深色共用）：每行 .item.css-dwibz9
+   原本是独立圆角卡片（浅色 rgb(252,247,240)、深色 rgb(23,24,26)），
+   去掉行内底色、圆角与阴影，只保留外层列表面板 .noPic.css-ch4h8o；
+   左右 padding 归零让文字与面板对齐，纵向 padding 保留行距
+   【脆弱锚点：.css-dwibz9、.css-ch4h8o】 */
+.sui-app-page .main-content .noPic.css-ch4h8o .item.css-dwibz9 {
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 /* ---------- 13. 页脚：配色令牌驱动，避开固定侧栏 ---------- */

@@ -236,7 +236,7 @@
     } catch (e) {
       v = "";
     }
-    return v || (themeDark() ? "#ff6b5e" : "#861a12");
+    return v || (themeDark() ? "#ff8a80" : "#861a12");
   }
 
   // 应用磁贴沿用站点原始图标库，不再重绘；仅模块标题图标继续自绘
