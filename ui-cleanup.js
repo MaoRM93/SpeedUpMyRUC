@@ -145,7 +145,11 @@
   }
 
   // 以模块标题为锚点隐藏首页整块，避免直接依赖哈希类名
-  // 只在 main 范围内做整段文字精确匹配，防止正文里的长标题被误命中
+  // 只在 main 范围内做整段文字精确匹配，防止正文里的长标题被误命中。
+  // 标题可能已被 spaceAILabels 补空格（如「AI智能服务」→「AI 智能服务」），
+  // 所以比较时忽略空白，仍按站点的原始连排文案匹配
+  const dense = (s) => String(s || "").replace(/\s+/g, "");
+
   function hideBlock(text, key) {
     if (document.querySelector(`[data-ruc-fast-item="${key}"]`)) return;
     const main =
@@ -155,7 +159,7 @@
     let leaf = null;
     for (const el of main.querySelectorAll("*")) {
       if (el.children.length) continue;
-      if ((el.textContent || "").trim() !== text) continue;
+      if (dense(el.textContent) !== dense(text)) continue;
       if (el.getBoundingClientRect().height < 1) continue;
       leaf = el;
       break;
