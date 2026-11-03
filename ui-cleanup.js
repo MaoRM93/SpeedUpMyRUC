@@ -299,7 +299,7 @@
 
     chrome.storage.local.get({ items: {} }).then(({ items }) => {
       for (const k of KEYS) if (items[k] === false) flags[k] = false;
-      document.documentElement.dataset.rucFast = "102.0.0.115";
+      document.documentElement.dataset.rucFast = "120.0.0.120";
       applyCSS();
       if (document.body) {
         start();
